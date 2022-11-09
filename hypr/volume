@@ -1,0 +1,5 @@
+#!/bin/sh
+
+vol_icon=🔊
+pamixer --get-mute | sh && vol_icon=🔇
+notify-send -h int:value:$(pamixer --get-volume) "$vol_icon" -t 1000 -r 1

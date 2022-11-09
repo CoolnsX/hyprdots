@@ -1,0 +1,8 @@
+#!/bin/sh
+
+x="Screenshot copied to clipboard"
+[ "$*" = "fullclip" ] && grim - | xclip -selection clipboard -t image/png
+[ "$*" = "fullsave" ] && grim && x="Screenshot saved"
+[ "$*" = "selclip" ] && grim -g "$(slurp)" - | xclip -selection clipboard -t image/png
+
+notify-send "$x"

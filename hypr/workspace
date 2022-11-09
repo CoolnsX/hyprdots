@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ -z "$*" ];then
+	for i in $(seq 4);do
+		notify-send "$(hyprctl clients | sed -nE 's_.*class: ([^ ]*).*_\1_p;s_.*workspace: ([^ ]*).*_workspace \1 : _p' | sed 'N;s/\n/ /')" -r 3 -t 1200
+        	sleep 1
+    done
+else
+	socat - UNIX-CONNECT:/tmp/hypr/$(echo $HYPRLAND_INSTANCE_SIGNATURE)/.socket2.sock | while read line; do notify-send "$(printf "$line" | sed -nE 's_^(.*workspace)>>([^ ]*)_\1 \2_p')" -r 1 -t 700 2>/dev/null ;notify-send "$(printf "$line" | sed -nE 's_activewindow>>([^,]*).*_\1_p')" -r 2 -t 700 2>/dev/null; done
+fi

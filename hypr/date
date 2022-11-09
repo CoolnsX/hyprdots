@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for i in $(seq 5);do 
+	notify-send "$(date)" -r 3 -t 1200 &
+	sleep 1
+done
