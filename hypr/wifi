@@ -1,9 +1,7 @@
 #!/bin/bash
-if rfkill list wifi | grep -q 'yes$' ; then
-   doas rfkill unblock wifi
-   notify-send "wifi on" -r 1
+if nmcli radio wifi | grep -q 'enabled' ; then
+	nmcli radio wifi off
 else
-   doas rfkill block wifi 
-   notify-send "wifi off" -r 1
+	nmcli radio wifi on
 fi
-
+notify-send "wifi $(nmcli radio wifi)" -r 1

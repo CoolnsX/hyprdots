@@ -14,7 +14,7 @@ gtb () {
 }
 
 b64 () { printf "%s" "$1" | base64 $2; }
-url() { curl -s https://0x0.st -F "file=@$*" | xclip -sel clip && notify-send "Link copied to clipboard"; }
+url() { curl -s https://0x0.st -F "file=@$*" | wl-copy && notify-send "Link copied to clipboard"; }
 
 gtd () {
     [ -z "$*" ] && file=$(git diff --name-only | fzf --border=rounded --height=10 --layout=reverse | tr -d ' ') || file=$*
@@ -22,19 +22,9 @@ gtd () {
     unset file
 }
 
-connectvnc () {
-	ssh  -N -T -L 5900:localhost:5900 -L 9873:localhost:9873 root@45.32.230.158 &
-	temp=$!
-	sleep 4
-	vncviewer :0
-	kill $temp
-	unset temp
-	sleep 1
-}
-
 gtc () { [ -z "$*" ] && [ -p "/dev/stdin" ] && read -r query </dev/stdin || query=$*; git clone "$query"; }
 
-gtr () { [ -z "$*" ] && [ -p "/dev/stdin" ] && read -r query </dev/stdin || query=$*; curl -s "https://api.github.com/users/$query/repos" | sed -nE 's|.*svn_url": "([^"]*)".*|\1|p' | fzf --border --height=10 --layout=reverse; }
+gtr () { [ -z "$*" ] && [ -p "/dev/stdin" ] && read -r query </dev/stdin || query=$*; curl -s "https://api.github.com/users/$query/repos" | sed -nE 's|.*ssh_url": "([^"]*)".*|\1|p' | fzf --border --height=10 --layout=reverse; }
 
 gtu () { [ -z "$*" ] || curl -s "https://api.github.com/search/users?q=$*" | sed -nE 's_.*login": "([^"]*)".*_\1_p' | fzf --layout=reverse --border --height=10; }
 
@@ -56,6 +46,7 @@ alias anime="$HOME/lol/ani-cli"
 alias cp="cp -v"
 alias rm="rm -v"
 alias mv="mv -v"
+alias pgrep="pgrep -a"
 alias grep="grep --color=auto -n"
 alias ncdu="ncdu --color dark"
 alias ll="ls --color=auto -alh"
