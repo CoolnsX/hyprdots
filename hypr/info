@@ -10,7 +10,7 @@ while [ $i -le "5" ];do
     vol_stats=$(pamixer --get-mute)
     [ "$bat_stats" = "Discharging" ] && bat_icon=🔋 || bat_icon=🔌
     [ "$vol_stats" = "true" ] && vol_icon=🔇 || vol_icon=🔊
-    notify-send "<------------(STATS)------------>" "🧠 CPU usage : $(top -ibn1 | sed -nE 's_%Cpu\(s\):(.*)us.*_\1_p' | cut -d' ' -f2-3) %\n🌡️ Cpu Temp : $temp °C\n🔳 RAM : $mem MB / 7733 MB\n$bat_icon Battery : $(cat /sys/class/power_supply/BAT*/capacity) (${bat_stats})\n☀️ Brightness : $(light -G | cut -d'.' -f1)%\n$vol_icon Volume : $(pamixer --get-volume-human)" -r 2 -t 1500 &
+    notify-send -i "lol" "<------------(STATS)------------>" "🧠 CPU usage : $(top -ibn1 | sed -nE 's_%Cpu\(s\):(.*)us.*_\1_p' | cut -d' ' -f2-3) %\n🌡️ Cpu Temp : $temp °C\n🔳 RAM : $mem MB / 7733 MB\n$bat_icon Battery : $(cat /sys/class/power_supply/BAT*/capacity) (${bat_stats})\n☀️ Brightness : $(light -G | cut -d'.' -f1)%\n$vol_icon Volume : $(pamixer --get-volume-human)\n🎵 $(cut -d ">" -f1 $HOME/.cache/yt-music/current | cut -d":" -f2)" -r 2 -t 1500 &
     : $((i+=1))
     sleep 1
 done

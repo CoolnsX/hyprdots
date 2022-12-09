@@ -1,8 +1,7 @@
 #!/bin/sh
 
-x="Screenshot copied to clipboard"
-[ "$*" = "fullclip" ] && grim - | wl-copy -t image/png
-[ "$*" = "fullsave" ] && grim && x="Screenshot saved"
-[ "$*" = "selclip" ] && grim -g "$(slurp)" - | wl-copy -t image/png
-
-notify-send "$x"
+icon="/usr/share/icons/Papirus/16x16/apps/applets-screenshooter.svg" 
+killall grim slurp
+[ "$*" = "fullclip" ] && grim - | wl-copy -t image/png && notify-send -i "$icon" "Screenshot copied to clipboard"
+[ "$*" = "fullsave" ] && grim && notify-send -i "$icon" "Screenshot saved"
+[ "$*" = "selclip" ] && grim -g "$(slurp)" - | wl-copy -t image/png && notify-send -i "$icon" "Screenshot copied to clipboard"

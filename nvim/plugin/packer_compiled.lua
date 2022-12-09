@@ -150,10 +150,20 @@ _G.packer_plugins = {
     path = "/home/tanveer/.local/share/nvim/site/pack/packer/start/nvim-colorizer.lua",
     url = "https://github.com/norcalli/nvim-colorizer.lua"
   },
+  ["nvim-dap"] = {
+    loaded = true,
+    path = "/home/tanveer/.local/share/nvim/site/pack/packer/start/nvim-dap",
+    url = "https://github.com/mfussenegger/nvim-dap"
+  },
   ["nvim-lspconfig"] = {
     loaded = true,
     path = "/home/tanveer/.local/share/nvim/site/pack/packer/start/nvim-lspconfig",
     url = "https://github.com/neovim/nvim-lspconfig"
+  },
+  ["nvim-parinfer"] = {
+    loaded = true,
+    path = "/home/tanveer/.local/share/nvim/site/pack/packer/start/nvim-parinfer",
+    url = "https://github.com/gpanders/nvim-parinfer"
   },
   ["nvim-web-devicons"] = {
     loaded = false,

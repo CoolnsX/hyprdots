@@ -1,7 +1,9 @@
 #!/bin/bash
 if nmcli radio wifi | grep -q 'enabled' ; then
 	nmcli radio wifi off
+	wifi_icon="offline"
 else
 	nmcli radio wifi on
+	wifi_icon="acquiring"
 fi
-notify-send "wifi $(nmcli radio wifi)" -r 1
+notify-send -i "/usr/share/icons/Papirus/16x16/panel/network-wireless-$wifi_icon.svg" "wifi $(nmcli radio wifi)" -r 1

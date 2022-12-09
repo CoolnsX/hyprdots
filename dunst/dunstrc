@@ -4,7 +4,7 @@
     ### Display ###
 
     # Which monitor should the notifications be displayed on.
-    monitor = 0
+    #monitor = 0
 
     # Display notification on focused monitor.  Possible modes are:
     #   mouse: follow mouse pointer
@@ -17,14 +17,14 @@
     #
     # If this option is set to mouse or keyboard, the monitor option
     # will be ignored.
-    follow = mouse
+    follow = keyboard
 
     ### Geometry ###
 
     # dynamic width from 0 to 300
     # width = (0, 300)
     # constant width of 300
-    width = 400
+    width = 360
 
     # The maximum height of a single notification, excluding the frame.
     height = 400
@@ -79,7 +79,7 @@
     # Padding between text and separator.
     padding = 8
 
-    highlight = "#1affff"
+    highlight = "#D81860"
 
     # Horizontal padding.
     horizontal_padding = 8
@@ -92,7 +92,7 @@
     frame_width = 3
 
     # Defines color of the frame around the notification window.
-    frame_color = "#1affff"
+    frame_color = "#D81860"
 
     # Size of gap to display between notifications - requires a compositor.
     # If value is greater than 0, separator_height will be ignored and a border
@@ -160,7 +160,7 @@
     #   %n  progress value if set without any extra characters
     #   %%  Literal %
     # Markup is allowed
-    format = "<b>%s</b> %n\n%b"
+    format = "<b>%s</b>\n%b"
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
@@ -198,7 +198,7 @@
     enable_recursive_icon_lookup = true
 
     # Set icon theme (only used for recursive icon lookup)
-    icon_theme = Adwaita
+    icon_theme = Papirus
     # You can also set multiple icon themes, with the leftmost one being used first.
     # icon_theme = "Adwaita, breeze"
 
@@ -214,7 +214,7 @@
     max_icon_size = 128
 
     # Paths to default icons (only neccesary when not using recursive icon lookup)
-    icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+    icon_path = /usr/share/icons/Papirus/16x16/status/:/usr/share/icons/Papirus/16x16/devices/:/usr/share/icons/Papirus/16x16/panel/
 
     ### History ###
 
@@ -228,7 +228,7 @@
     ### Misc/Advanced ###
 
     # dmenu path.
-    dmenu = /usr/local/bin/dmenu -p dunst:
+    dmenu = "/sbin/bemenu -i --fn 'Roboto 16' -l 10 -c -W 0.4 -B 3 -p 'dunst:'"
 
     # Browser for opening urls in context menu.
     browser = /usr/bin/xdg-open

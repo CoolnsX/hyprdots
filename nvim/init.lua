@@ -26,6 +26,8 @@ require('packer').startup(function(use)
 }
     use 'hrsh7th/cmp-nvim-lsp'
     use 'hrsh7th/cmp-nvim-lua'
+    use 'gpanders/nvim-parinfer'
+    use 'mfussenegger/nvim-dap'
     use 'hrsh7th/cmp-buffer'
     use 'hrsh7th/cmp-path'
     use 'norcalli/nvim-colorizer.lua'
@@ -45,7 +47,7 @@ require("mason").setup {
     ui = {
         icons = {
             package_installed = "✓",
-	    package_pending = "➜",
+	    package_pending = "➜ ",
             package_uninstalled = "✗"
         }
     }
@@ -58,13 +60,33 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 local lspconfig = require('lspconfig')
+local configs = require ('lspconfig.configs')
+
+--for enabling intelephense
+if not configs.intelephense then
+  configs.intelephense = {
+    default_config = {
+      cmd = { 'intelephense', '--stdio' };
+      filetypes = { 'php' };
+      root_dir = function (fname)
+	      return vim.loop.cwd();
+      end;
+      settings = {
+        intelephense = {
+          files = {
+            maxSize = 1000000;
+          };
+        }
+      }
+    }
+  }
+end
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'bashls', 'pyright', 'sumneko_lua', 'clangd', 'html','cssls'}
+local servers = { 'bashls', 'pyright', 'sumneko_lua', 'clangd','intelephense','phpactor'}
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
-    -- on_attach = my_custom_on_attach,
-    capabilities = capabilities,
+	  capabilities = capabilities,
   }
 end
 
@@ -131,25 +153,17 @@ require('lualine').setup {
     --theme = 'pywal',
   }
 }
---vim.cmd[[hi Normal ctermbg=none guibg=none]]
---vim.cmd[[hi NormalNC ctermbg=none guibg=none]]
---vim.cmd[[hi Comment ctermbg=none guibg=none]]
---vim.cmd[[hi Constant ctermbg=none guibg=none]]
---vim.cmd[[hi Special ctermbg=none guibg=none]]
---vim.cmd[[hi Identifier ctermbg=none guibg=none]]
---vim.cmd[[hi Statement ctermbg=none guibg=none]]
---vim.cmd[[hi PreProc ctermbg=none guibg=none]]
---vim.cmd[[hi Type ctermbg=none guibg=none]]
---vim.cmd[[hi Underlined ctermbg=none guibg=none]]
---vim.cmd[[hi Todo ctermbg=none guibg=none]]
---vim.cmd[[hi String ctermbg=none guibg=none]]
---vim.cmd[[hi Function ctermbg=none guibg=none]]
---vim.cmd[[hi Conditional ctermbg=none guibg=none]]
---vim.cmd[[hi Repeat ctermbg=none guibg=none]]
---vim.cmd[[hi Operator ctermbg=none guibg=none]]
---vim.cmd[[hi Structure ctermbg=none guibg=none]]
---vim.cmd[[hi LineNr ctermbg=none guibg=none]]
---vim.cmd[[hi NonText ctermbg=none guibg=none]]
---vim.cmd[[hi SignColumn ctermbg=none guibg=none]]
---vim.cmd[[hi CursorLineNr ctermbg=none guibg=none]]
---vim.cmd[[hi EndOfBuffer ctermbg=none guibg=none]]
+
+-- mapping keys
+--nnoremap <silent> <F5> <Cmd>lua require'dap'.continue()<CR>
+--nnoremap <silent> <F10> <Cmd>lua require'dap'.step_over()<CR>
+--nnoremap <silent> <F11> <Cmd>lua require'dap'.step_into()<CR>
+--nnoremap <silent> <F12> <Cmd>lua require'dap'.step_out()<CR>
+
+--dap server
+local dap = require('dap')
+    dap.adapters.python = {
+      type = 'executable';
+      command = os.getenv('HOME') .. '/.virtualenvs/tools/bin/python';
+      args = { '-m', 'debugpy.adapter' };
+}
