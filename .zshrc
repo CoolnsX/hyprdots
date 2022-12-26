@@ -1,7 +1,7 @@
 #user-defined functions
 gtp(){
     [ -z "$*" ] && commit=$(curl -s "https://raw.githubusercontent.com/ngerakines/commitment/master/commit_messages.txt" | shuf -n1) || commit=$*
-    git add .
+    git add -p
     git commit -m "$commit"
     git push
     unset commit
@@ -18,7 +18,7 @@ url() { curl -s https://0x0.st -F "file=@$*" | wl-copy && notify-send "Link copi
 
 gtd () {
     [ -z "$*" ] && file=$(git diff --name-only | fzf --border=rounded --height=10 --layout=reverse | tr -d ' ') || file=$*
-    [ -z "$file" ] || git diff $file
+    [ -z "$file" ] || git diff --name-only --relative --diff-filter=d $file | xargs bat  --paging=never --diff
     unset file
 }
 
@@ -33,6 +33,23 @@ clshist() {
     [ "$a" -gt 201 ] && sed -i "1,$((a - 200))d" ~/.histfile
 }
 
+v() {
+	[ -z "$*" ] && file=$(fzf --preview 'bat --color=always --style=numbers --line-range=:500 {}' -m) || file=$*
+	nvim -O $file
+}
+
+help() {
+	"$@" --help 2>&1 | bat -pp --language=help
+}
+
+addpkg(){
+	paru -Ss "$*" | sed -nE 's|^[a-z]*/([^ ]*).*|\1|p' | fzf --preview 'paru -Si {} | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap | paru -S -
+}
+
+rmpkg(){
+	paru -Qs "$*" | sed -nE 's|^[a-z]*/([^ ]*).*|\1|p' | fzf --preview 'paru -Si {} | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap | paru -Rcns -
+}
+
 # Lines configured by zsh-newuser-install
 export EDITOR="nvim"
 export VISUAL="nvim"
@@ -41,13 +58,13 @@ export OPENER="xdg-open"
 export VIDEO="mpv"
 export WM="hyprland"
 export IMAGE="nsxiv"
-alias v="nvim -O"
+alias cat="bat -pp"
 alias anime="$HOME/lol/ani-cli"
 alias cp="cp -v"
 alias rm="rm -v"
 alias mv="mv -v"
 alias pgrep="pgrep -a"
-alias grep="grep --color=auto -n"
+alias grep="grep --color=auto"
 alias ncdu="ncdu --color dark"
 alias ll="ls --color=auto -alh"
 alias ls="ls --color=auto"
