@@ -1,0 +1,52 @@
+#!/bin/sh
+
+
+out=$(echo '{ "command": ["get_property", "pause"]}' | socat - /tmp/mpvsocket 2>/dev/null)
+case $1 in
+	song)
+		if [ -n "$out" ];then
+			cut -d'>' -f1 < "$HOME/.cache/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|-$||'
+		else
+			echo "Offline"
+		fi
+		;;
+	artist)
+		if [ -n "$out" ];then
+			cut -d'>' -f1 < "$HOME/.cache/yt-music/current" | sed 's_.* -__'
+		else
+			echo "Offline"
+		fi
+		;;
+	cover)
+		if [ -n "$out" ];then
+			echo "$HOME/.cache/yt-music/default.jpg"
+		else
+			echo "$HOME/.config/eww/music.png"
+		fi
+		;;
+	status)
+		if [ -z "$out" ];then
+			printf ""
+		elif printf "%s" "$out" | grep -q "true";then
+			echo "喇"
+		else
+			echo ""
+		fi
+		;;
+	play_toggle)
+		echo cycle pause | socat - "/tmp/mpvsocket"
+		;;
+	next)
+		$HOME/repos_scripts/yt-music play_next >/dev/null
+		;;
+	prev)
+		$HOME/repos_scripts/yt-music play "$(sed 's| >|\t|g' $HOME/.cache/yt-music/prev | cut -d':' -f2)"
+		;;
+	time)
+		out=$(echo '{"command" :["get_property" , "percent-pos"]}' | socat - /tmp/mpvsocket 2>/dev/null | sed -nE 's_.*data":([^,]*).*_\1_p')
+		[ -z "$out" ] && echo "0" || echo "$out"
+		;;
+	seek)
+		echo "{\"command\" :[\"seek\" ,\"$2\",\"relative-percent\"]}" | socat - /tmp/mpvsocket
+		;;
+esac

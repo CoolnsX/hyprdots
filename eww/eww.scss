@@ -1,0 +1,102 @@
+* {
+  all: unset;
+}
+
+
+/** Background ***************************************/
+.bg {
+	background-color: rgba(0,0,0,0);
+	opacity: 0;
+}
+
+/** Generic window ***********************************/
+.genwin {
+	background-color: rgba(0,0,0,0);
+	border-radius: 16px;
+}
+
+/** Clock ********************************************/
+.time_hour, .time_min {
+	color: #DA0F67;
+	font-size : 70px;
+	font-weight : bold;
+}
+.time_hour {
+	margin : 15px 0px 0px 20px;
+}
+.time_min {
+	margin : 0px 0px 10px 0px;
+}
+
+.time_mer {
+	color: #A3BE8C;
+	font-size : 40px;
+	font-weight : bold;
+	margin : 20px 0px 0px 0px;
+}
+
+.time_day {
+	color: #EBCB8B;
+	font-size : 30px;
+	font-weight : normal;
+	margin : 0px 0px 20px -20px;
+}
+
+/** Music ***************************************/
+.album_art {
+	background-size: cover;
+	background-repeat:no-repeat;
+	background-color: rgba(0,0,0,0);
+	min-height: 210px;
+	min-width: 210px;
+	margin: 0px 50px 0px 0px;
+	border-radius: 15px;
+	border-style:none;
+}
+
+.song {
+	color: #DA0F67;
+	font-size : 24px;
+	font-weight : bold;
+	margin : 5px 0px 0px 0px;
+}
+
+.artist {
+	color: #EBCB8B;
+	font-size : 20px;
+	font-weight : normal;
+	margin : 0px 0px -10px 0px;
+}
+
+.btn_play {
+	margin : 0px 0px 0px 0px;
+	color: #A3BE8C;
+	font-size : 70px;
+	font-weight : bold;
+}
+
+.btn_prev {
+	color: #EBCB8B;
+	font-size : 32px;
+	font-weight : normal;
+}
+
+.btn_next {
+	color: #EBCB8B;
+	font-size : 32px;
+	font-weight : normal;
+}
+
+.music_bar scale trough highlight {
+	all: unset;
+    background-image: linear-gradient(to right, #8A3288 30%, #8A32AA 50%, #8A326F 100% *50);
+	border-radius: 24px;
+}
+.music_bar scale trough {
+	all: unset;
+	background-color: #232232;
+	border-radius: 24px;
+	min-height: 13px;
+	min-width: 190px;
+	margin : -22px 0px 10px 0px;
+}

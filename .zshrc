@@ -34,20 +34,19 @@ clshist() {
 }
 
 v() {
-	[ -z "$*" ] && file=$(fzf --preview 'bat --color=always --style=numbers --line-range=:500 {}' -m) || file=$*
-	nvim -O $file
+	[ -z "$*" ] && nvim -O $(fzf --preview 'bat --color=always --style=numbers --line-range=:500 {}' -m | tr '\n' ' ') || nvim -O $*
 }
 
 help() {
-	"$@" --help 2>&1 | bat -pp --language=help
+	"$@" --help 2>&1 | bat --plain --language=help
 }
 
 addpkg(){
-	paru -Ss "$*" | sed -nE 's|^[a-z]*/([^ ]*).*|\1|p' | fzf --preview 'paru -Si {} | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap | paru -S -
+	paru -Ss "$*" | sed -nE 's|^[a-z]*/([^ ]*).*|\1|p' | fzf --preview 'paru -Si {} | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap -m | paru -S -
 }
 
 rmpkg(){
-	paru -Qs "$*" | sed -nE 's|^[a-z]*/([^ ]*).*|\1|p' | fzf --preview 'paru -Si {} | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap | paru -Rcns -
+	paru -Qq | fzf --preview 'paru -Si {} | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap -m | paru -Rcns -
 }
 
 # Lines configured by zsh-newuser-install
@@ -59,7 +58,7 @@ export VIDEO="mpv"
 export WM="hyprland"
 export IMAGE="nsxiv"
 alias cat="bat -pp"
-alias anime="$HOME/lol/ani-cli"
+alias anime="$HOME/ani-cli/ani-cli"
 alias cp="cp -v"
 alias rm="rm -v"
 alias mv="mv -v"
