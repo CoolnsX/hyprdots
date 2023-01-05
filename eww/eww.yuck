@@ -14,7 +14,7 @@
 
 (defwindow time_0
            :monitor 0
-           :geometry (geometry :x "-10px"
+           :geometry (geometry :x "0px"
                                :y "20px"
                                :width "20%"
                                :height "200px"
@@ -25,9 +25,9 @@
            :wm-ignore false
 	   (clock))
 
-(defpoll HOUR :interval "5s" `date +\"%I\"`)
-(defpoll MIN :interval "5s" `date +\"%M\"`)
-(defpoll MER :interval "5s" `date +\"%p\"`)
+(defpoll HOUR :interval "2s" `date +\"%I\"`)
+(defpoll MIN :interval "2s" `date +\"%M\"`)
+(defpoll MER :interval "2s" `date +\"%p\"`)
 (defpoll DAY :interval "5s" `date +\"%A\"`)
 
 (defwidget clock [] 
@@ -45,7 +45,7 @@
            :geometry (geometry :x "50"
                                :y "50"
                                :width "20%"
-                               :height "0px"
+                               :height "40px"
                                :anchor "bottom left")
            :stacking "bg"
            :reserve (struts :distance "10px" :side "bottom")

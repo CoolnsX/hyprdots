@@ -165,6 +165,11 @@ _G.packer_plugins = {
     path = "/home/tanveer/.local/share/nvim/site/pack/packer/start/nvim-parinfer",
     url = "https://github.com/gpanders/nvim-parinfer"
   },
+  ["nvim-treesitter"] = {
+    loaded = true,
+    path = "/home/tanveer/.local/share/nvim/site/pack/packer/start/nvim-treesitter",
+    url = "https://github.com/nvim-treesitter/nvim-treesitter"
+  },
   ["nvim-web-devicons"] = {
     loaded = false,
     needs_bufread = false,
