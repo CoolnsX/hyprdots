@@ -17,7 +17,7 @@
 
 /** Clock ********************************************/
 .time_hour, .time_min {
-	color: #DA0F67;
+	color: #81A1C1;
 	font-size : 70px;
 	font-weight : bold;
 }
@@ -55,7 +55,7 @@
 }
 
 .song {
-	color: #DA0F67;
+	color: #8FBCBB;
 	font-size : 24px;
 	font-weight : bold;
 	margin : 5px 0px 0px 0px;
@@ -89,7 +89,7 @@
 
 .music_bar scale trough highlight {
 	all: unset;
-    background-image: linear-gradient(to right, #EA3288 30%, #EA32AA 50%, #EA326F 100% *50);
+    background-image: linear-gradient(to right, #afcee0 30%, #a1bdce 50%, #77a5bf 100% *50);
 	border-radius: 24px;
 }
 .music_bar scale trough {

@@ -173,7 +173,7 @@ local dap = require('dap')
 --treesitter
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all"
-  ensure_installed = { "c", "lua", "bash", "html", "css","php","javascript", "python" },
+  ensure_installed = { "c", "lua", "bash", "html", "css","php","javascript", "python","jsonc" },
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
