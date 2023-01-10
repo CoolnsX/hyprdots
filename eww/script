@@ -36,10 +36,10 @@ case $1 in
 		echo cycle pause | socat - "/tmp/mpvsocket"
 		;;
 	next)
-		/home/tanveer/repos_scripts/yt-music play_next
+		pgrep -f mpvsocket >/dev/null 2>&1 && /home/tanveer/repos_scripts/yt-music play_next
 		;;
 	prev)
-		pgrep -f mpvsocket >/dev/null 2>&1 && $HOME/repos_scripts/yt-music play "$(sed 's| >|\t|g' $HOME/.cache/yt-music/prev | cut -d':' -f2)"
+		pgrep -f mpvsocket >/dev/null 2>&1 && ($HOME/repos_scripts/yt-music play "$(sed 's| >|\t|g' $HOME/.cache/yt-music/prev | cut -d':' -f2)")
 		;;
 	time)
 		out=$(echo '{"command" :["get_property" , "percent-pos"]}' | socat - /tmp/mpvsocket 2>/dev/null | sed -nE 's_.*data":([^,]*).*_\1_p')
