@@ -14,11 +14,11 @@
 
 (defwindow time_0
            :monitor 0
-           :geometry (geometry :x "0px"
-                               :y "20px"
-                               :width "20%"
+           :geometry (geometry :x "50px"
+                               :y "50px"
+                               :width "21%"
                                :height "200px"
-                               :anchor "top right")
+                               :anchor "bottom right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"

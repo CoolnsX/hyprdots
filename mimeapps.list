@@ -1,0 +1,27 @@
+[Default Applications]
+inode/directory=pcmanfm.desktop
+image/jpeg=nsxiv.desktop
+application/pdf=org.pwmt.zathura.desktop
+text/html=nvim.desktop
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+x-scheme-handler/about=google-chrome.desktop
+x-scheme-handler/unknown=google-chrome.desktop
+image/png=nsxiv.desktop
+plain/text=nvim.desktop
+text/x-python=nvim.desktop
+text/english=nvim.deskop
+text/plain=nvim.desktop
+text/x-makefile=nvim.deskop
+text/x-c++hdr=nvim.deskop
+text/x-c++src=nvim.deskop
+text/x-chdr=nvim.deskop
+text/x-csrc=nvim.deskop
+text/x-java=nvim.deskop
+text/x-moc=nvim.deskop
+text/x-pascal=nvim.deskop
+text/x-tcl=nvim.deskop
+text/x-tex=nvim.deskop
+application/x-shellscript=nvim.deskop
+text/x-c=nvim.deskop
+text/x-c++=nvim.deskop
