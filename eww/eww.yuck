@@ -1,8 +1,8 @@
 ;;time
 (defwindow time_1
            :monitor 1
-           :geometry (geometry :x "-10px"
-                               :y "30px"
+           :geometry (geometry :x "10px"
+                               :y "0px"
                                :width "20%"
                                :height "200px"
                                :anchor "top right")
@@ -14,11 +14,11 @@
 
 (defwindow time_0
            :monitor 0
-           :geometry (geometry :x "50px"
-                               :y "50px"
+           :geometry (geometry :x "10px"
+                               :y "0px"
                                :width "21%"
                                :height "200px"
-                               :anchor "bottom right")
+                               :anchor "top right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"
@@ -35,7 +35,7 @@
 		(box :orientation "h" :spacing 0
 			(label :class "time_hour" :valign "start" :wrap "true" :limit-width 25 :text HOUR)
 			(label :class "time_min" :valign "end" :wrap "true" :limit-width 25 :text MIN))
-		(box :orientation "v" :spacing 0 
+		(box :orientation "v" :spacing 0 :space-evenly true
 			(label :class "time_mer" :valign "start" :halign "end" :wrap "true" :limit-width 25 :text MER)
 			(label :class "time_day" :valign "end" :halign "end" :wrap "true" :limit-width 25 :text DAY))))
 
@@ -57,8 +57,8 @@
            :monitor 1
            :geometry (geometry :x "50"
                                :y "50"
-                               :width "20%"
-                               :height "0px"
+                               :width "30%"
+                               :height "40px"
                                :anchor "bottom left")
            :stacking "bg"
            :reserve (struts :distance "10px" :side "bottom")
@@ -66,10 +66,10 @@
            :wm-ignore true
 	   (music))
 
-(defpoll SONG :interval "1s" `./script song`)
-(defpoll ARTIST :interval "1s" `./script artist`)
+(defpoll SONG :interval "2s" `./script song`)
+(defpoll ARTIST :interval "2s" `./script artist`)
 (defpoll STATUS :interval "0.5s" `./script status`)
-(defpoll COVER :interval "1s" `./script cover`)
+(defpoll COVER :interval "2s" `./script cover`)
 (defpoll CURRENT :interval "1s" `./script time`)
 
 (defwidget music [] 

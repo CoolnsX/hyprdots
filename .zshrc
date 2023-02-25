@@ -7,6 +7,23 @@ gtp(){
     unset commit
 }
 
+megamind() {
+	printf "———————————%s———————————
+⠀⣞⢽⢪⢣⢣⢣⢫⡺⡵⣝⡮⣗⢷⢽⢽⢽⣮⡷⡽⣜⣜⢮⢺⣜⢷⢽⢝⡽⣝
+⠸⡸⠜⠕⠕⠁⢁⢇⢏⢽⢺⣪⡳⡝⣎⣏⢯⢞⡿⣟⣷⣳⢯⡷⣽⢽⢯⣳⣫⠇
+⠀⠀⢀⢀⢄⢬⢪⡪⡎⣆⡈⠚⠜⠕⠇⠗⠝⢕⢯⢫⣞⣯⣿⣻⡽⣏⢗⣗⠏⠀
+⠀⠪⡪⡪⣪⢪⢺⢸⢢⢓⢆⢤⢀⠀⠀⠀⠀⠈⢊⢞⡾⣿⡯⣏⢮⠷⠁⠀⠀
+⠀⠀⠀⠈⠊⠆⡃⠕⢕⢇⢇⢇⢇⢇⢏⢎⢎⢆⢄⠀⢑⣽⣿⢝⠲⠉⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⡿⠂⠠⠀⡇⢇⠕⢈⣀⠀⠁⠡⠣⡣⡫⣂⣿⠯⢪⠰⠂⠀⠀⠀⠀
+⠀⠀⠀⠀⡦⡙⡂⢀⢤⢣⠣⡈⣾⡃⠠⠄⠀⡄⢱⣌⣶⢏⢊⠂⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢝⡲⣜⡮⡏⢎⢌⢂⠙⠢⠐⢀⢘⢵⣽⣿⡿⠁⠁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠨⣺⡺⡕⡕⡱⡑⡆⡕⡅⡕⡜⡼⢽⡻⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣼⣳⣫⣾⣵⣗⡵⡱⡡⢣⢑⢕⢜⢕⡝⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣴⣿⣾⣿⣿⣿⡿⡽⡑⢌⠪⡢⡣⣣⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⡟⡾⣿⢿⢿⢵⣽⣾⣼⣘⢸⢸⣞⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+———————————————————————————————\n" "$*"
+}
 gtb () {
     [ -z "$*" ] && br=$(git branch -a | fzf --border=rounded --layout=reverse --height=10 | tr -d ' ') || br=$*
     [ -z "$br" ] || git checkout $br
@@ -14,7 +31,23 @@ gtb () {
 }
 
 b64 () { printf "%s" "$1" | base64 $2; }
-url() { curl -s https://0x0.st -F "file=@$*" | wl-copy && notify-send "Link copied to clipboard"; }
+
+url() {
+	[ -z "$2" ] && duration="1440" || duration=$2
+	out=$(curl https://oshi.at -F shorturl=0 -F "f=@$1" -F "expire=$duration") #1440 means 1 day duration
+	[ -z "$out" ] && return 1
+	printf "%s" "$out" | sed -nE 's|DL: (.*)|\1|p' | wl-copy && notify-send "Link copied to clipboard";
+	wl-paste
+	#storing only long duration links
+	[ -z "$2" ] && printf "%s\n%s" "$out" "$(date '+%s')" | tr '\n' '>' | sed 's/>/ | /g' >> $HOME/.cache/oshi-urls
+
+	#deleting file uploaded than 1 day ago
+	for i in $(cut -d'|' -f3 $HOME/.cache/oshi-urls | tr -d ' ');do 
+		curr=$(date '+%s')
+		[ "$((curr - i))" -gt "86400" ] && sed -i "/$i/d" $HOME/.cache/oshi-urls &
+	done
+	echo >> $HOME/.cache/oshi-urls
+}
 
 gtd () {
     preview="git diff $@ --color=always -- {-1}"
@@ -46,6 +79,7 @@ help() {
 }
 
 addpkg(){
+	[ -z "$*" ] && printf "\033[1;31mPlease write the name of package (just some words)..\033[0m" && return 1
 	paru -Ss "$*" | sed -nE 's|^[a-z]*/([^ ]*).*|\1|p' | fzf --preview 'paru -Si {} | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap -m | paru -S -
 }
 
@@ -63,8 +97,10 @@ export VIDEO="mpv"
 export WM="hyprland"
 export IMAGE="nsxiv"
 alias cat="bat -pp"
+alias open="xdg-open"
 alias anime="$HOME/ani-cli/ani-cli"
 alias cp="cp -v"
+alias art="php artisan"
 alias rm="rm -v"
 alias mv="mv -v"
 alias pgrep="pgrep -a"
@@ -79,6 +115,7 @@ clshist
 HISTFILE=~/.histfile
 HISTSIZE=200
 SAVEHIST=200
+PROMPT_EOL_MARK=' ⏎ '
 setopt autocd
 bindkey -e
 zstyle :compinstall filename '/home/tanveer/.zshrc'

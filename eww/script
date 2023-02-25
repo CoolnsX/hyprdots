@@ -4,21 +4,21 @@ out=$(echo '{ "command": ["get_property", "pause"]}' | socat - /tmp/mpvsocket 2>
 case $1 in
 	song)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			cut -d'>' -f1 < "$HOME/.cache/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|-$||'
+			cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|-$||'
 		else
 			echo "Offline"
 		fi
 		;;
 	artist)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			cut -d'>' -f1 < "$HOME/.cache/yt-music/current" | sed 's_.* -__'
+			cut -d'>' -f1 < "/tmp/yt-music/current" | sed 's_.* -__'
 		else
 			echo "Offline"
 		fi
 		;;
 	cover)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			echo "$HOME/.cache/yt-music/default.jpg"
+			echo "/tmp/yt-music/default.jpg"
 		else
 			echo "$HOME/.config/eww/music.png"
 		fi
@@ -39,7 +39,7 @@ case $1 in
 		pgrep -f mpvsocket >/dev/null 2>&1 && /home/tanveer/repos_scripts/yt-music play_next
 		;;
 	prev)
-		pgrep -f mpvsocket >/dev/null 2>&1 && ($HOME/repos_scripts/yt-music play "$(sed 's| >|\t|g' $HOME/.cache/yt-music/prev | cut -d':' -f2)")
+		pgrep -f mpvsocket >/dev/null 2>&1 && ($HOME/repos_scripts/yt-music play "$(sed 's| >|\t|g' /tmp/yt-music/prev | cut -d':' -f2)")
 		;;
 	time)
 		out=$(echo '{"command" :["get_property" , "percent-pos"]}' | socat - /tmp/mpvsocket 2>/dev/null | sed -nE 's_.*data":([^,]*).*_\1_p')

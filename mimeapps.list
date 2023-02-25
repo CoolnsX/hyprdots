@@ -2,7 +2,7 @@
 inode/directory=pcmanfm.desktop
 image/jpeg=nsxiv.desktop
 application/pdf=org.pwmt.zathura.desktop
-text/html=nvim.desktop
+text/html=google-chrome.desktop
 x-scheme-handler/http=google-chrome.desktop
 x-scheme-handler/https=google-chrome.desktop
 x-scheme-handler/about=google-chrome.desktop
@@ -25,3 +25,7 @@ text/x-tex=nvim.deskop
 application/x-shellscript=nvim.deskop
 text/x-c=nvim.deskop
 text/x-c++=nvim.deskop
+video/x-matroska=mpv.desktop
+
+[Added Associations]
+video/x-matroska=mpv.desktop;

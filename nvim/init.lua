@@ -1,5 +1,3 @@
-
-
 -- functionality setup
 local set = vim.opt
 set.number=true
@@ -19,11 +17,22 @@ require('packer').startup(function(use)
     use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } }
     use 'https://gitlab.com/__tpb/monokai-pro.nvim'
     use { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig", }
+    use {
+    		"adalessa/laravel.nvim",
+    		dependencies = {
+    		    "nvim-telescope/telescope.nvim",
+    		},
+    		cmd = {"Artisan", "Composer"},
+    		config = function()
+    		    require("laravel").setup()
+    		    require("telescope").load_extension("laravel")
+    		end
+	}
     --use { 'AlphaTechnolog/pywal.nvim', as = 'pywal' }
     use {
-	"windwp/nvim-autopairs",
-    config = function() require("nvim-autopairs").setup {} end
-}
+		"windwp/nvim-autopairs",
+    		config = function() require("nvim-autopairs").setup {} end
+	}
     use 'hrsh7th/cmp-nvim-lsp'
     use 'hrsh7th/cmp-nvim-lua'
     use 'gpanders/nvim-parinfer'
@@ -54,7 +63,7 @@ require("mason").setup {
     }
 }
 require("mason-lspconfig").setup {
-    ensure_installed = { "sumneko_lua" },
+    ensure_installed = { "lua_ls" },
 }
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -83,8 +92,20 @@ if not configs.intelephense then
   }
 end
 
+-- for arduino lsp server
+local MY_FQBN = "arduino:avr:nano"
+lspconfig.arduino_language_server.setup {
+    cmd = {
+        "arduino-language-server",
+        "-cli-config", "/path/to/arduino-cli.yaml",
+        "-fqbn",
+        MY_FQBN
+    }
+}
+
+
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'bashls', 'pyright', 'sumneko_lua', 'clangd','intelephense','phpactor'}
+local servers = { 'bashls', 'pyright', 'lua_ls', 'clangd','intelephense','phpactor' }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
 	  capabilities = capabilities,

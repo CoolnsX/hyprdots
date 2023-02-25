@@ -6,10 +6,11 @@ setup_dual_monitor(){
 	if hyprctl monitors | grep -q "HDMI-A-1";then
 		notify-send "Setting up dual monitor workflow"
 		wlr-randr --output 'HDMI-A-1' --custom-mode '1920x1080'
-                for i in $(seq 3);do
+                for i in $(seq 2 4);do
 		  hyprctl dispatch moveworkspacetomonitor "$i 0"
                 done
-		hyprctl dispatch moveworkspacetomonitor "4 1"
+		hyprctl dispatch moveworkspacetomonitor "1 1"
+		eww kill
 		eww open-many time_1 music_1
 	fi
 }
@@ -37,7 +38,7 @@ case $1 in
 		#shows the workspace number as notification whenever u switch workspaces and also handles the dual monitor setup on the fly(perfect for laptop users)
 		socat - "UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line;do 
 			printf "%s" "$line" | grep -q "monitoradded" && handle_it "$line"
-			printf "%s" "$line" | grep -q "monitorremoved" && sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,preferred,auto,1/g" "$HOME/.config/hypr/hyprland.conf" && eww close music_1 time_1
+			printf "%s" "$line" | grep -q "monitorremoved" && sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,preferred,auto,1/g" "$HOME/.config/hypr/hyprland.conf" && eww kill && eww open_many time_0 music_0
 			#recent workspace switcher
 			current=$(printf "%s" "$line" | sed -nE 's_^(workspace)>>([^ ]*)_\1 \2_p')
 			if [ -n "$current" ];then
