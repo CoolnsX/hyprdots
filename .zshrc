@@ -125,7 +125,7 @@ SAVEHIST=200
 PROMPT_EOL_MARK=' ⏎ '
 setopt autocd
 bindkey -e
-zstyle :compinstall filename '/home/tanveer/.zshrc'
+zstyle :compinstall filename "$HOME/.zshrc"
 autoload -Uz compinit
 compinit
 zstyle ':completion:*' menu select
