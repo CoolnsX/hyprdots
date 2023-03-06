@@ -1,11 +1,11 @@
 ;;time
 (defwindow time_1
            :monitor 1
-           :geometry (geometry :x "10px"
-                               :y "0px"
-                               :width "20%"
+           :geometry (geometry :x "50px"
+                               :y "50px"
+                               :width "23%"
                                :height "200px"
-                               :anchor "top right")
+                               :anchor "bottom right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"
@@ -14,11 +14,11 @@
 
 (defwindow time_0
            :monitor 0
-           :geometry (geometry :x "10px"
-                               :y "0px"
-                               :width "21%"
+           :geometry (geometry :x "50px"
+                               :y "50px"
+                               :width "23%"
                                :height "200px"
-                               :anchor "top right")
+                               :anchor "bottom right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"
@@ -86,4 +86,5 @@
 				(button :class "btn_next" :onclick "./script next" "怜"))
 			(box :class "music_bar" :halign "center" :vexpand "false" :hexpand "false" :space-evenly "false"
 					(scale :min 0 :active "true" :max 100 :value CURRENT))
-			)))
+			)
+		))

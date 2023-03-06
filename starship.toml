@@ -1,10 +1,10 @@
 # ~/.config/starship.toml
 
-format = "[┌─](bold green)$all"
+format = " (bold green)$all"
 
-[character]
-success_symbol = "[└─>](bold green)"
-error_symbol = "[└─>](bold red)"
+#[character]
+#success_symbol = "[└─>](bold green)"
+#error_symbol = "[└─>](bold red)"
 
 [cmd_duration]
 min_time = 70 
@@ -27,9 +27,9 @@ format = '[\($state( $progress_current of $progress_total)\)]($style) '
 
 [git_status]
 conflicted = "⚔️ "
-ahead = "🏎️ 💨×${count} "
+ahead = "🏎️ 💨 ×${count} "
 behind = "🐢×${count} "
-diverged = "🔱 🏎️ 💨×{ahead_count} 🐢×${behind_count} "
+diverged = "🔱 {ahead} {behind}"
 untracked = "🛤️ ×${count} "
 stashed = "📦 "
 modified = "📝×${count} "

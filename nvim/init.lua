@@ -1,4 +1,4 @@
--- functionality setup
+
 local set = vim.opt
 set.number=true
 set.relativenumber=true
@@ -6,18 +6,24 @@ set.shiftwidth=8
 set.termguicolors = true
 
 --plugin setup
-local fn = vim.fn
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-if fn.empty(fn.glob(install_path)) > 0 then
-  packer_bootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
-  vim.cmd [[packadd packer.nvim]]
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
 end
-require('packer').startup(function(use)
-    use 'wbthomason/packer.nvim'
-    use { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } }
-    use 'https://gitlab.com/__tpb/monokai-pro.nvim'
-    use { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig", }
-    use {
+vim.opt.rtp:prepend(lazypath)
+require('lazy').setup({
+    'wbthomason/packer.nvim',
+    { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } },
+    'https://gitlab.com/__tpb/monokai-pro.nvim',
+    { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig", },
+    {
     		"adalessa/laravel.nvim",
     		dependencies = {
     		    "nvim-telescope/telescope.nvim",
@@ -27,30 +33,25 @@ require('packer').startup(function(use)
     		    require("laravel").setup()
     		    require("telescope").load_extension("laravel")
     		end
-	}
-    --use { 'AlphaTechnolog/pywal.nvim', as = 'pywal' }
-    use {
-		"windwp/nvim-autopairs",
-    		config = function() require("nvim-autopairs").setup {} end
-	}
-    use 'hrsh7th/cmp-nvim-lsp'
-    use 'hrsh7th/cmp-nvim-lua'
-    use 'gpanders/nvim-parinfer'
-    use 'mfussenegger/nvim-dap'
-    use 'hrsh7th/cmp-buffer'
-    use 'hrsh7th/cmp-path'
-    use 'norcalli/nvim-colorizer.lua'
-    use 'hrsh7th/cmp-cmdline'
-    use 'hrsh7th/nvim-cmp'
-    use 'saadparwaiz1/cmp_luasnip'
-    use 'L3MON4D3/LuaSnip'
-    use "rafamadriz/friendly-snippets"
-    use ('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
-
-if packer_bootstrap then
-    require('packer').sync()
-  end
-end)
+	},
+    {
+    	"windwp/nvim-autopairs",
+    	config = function() require("nvim-autopairs").setup {} end
+    },
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-nvim-lua',
+    'gpanders/nvim-parinfer',
+    'mfussenegger/nvim-dap',
+    'hrsh7th/cmp-buffer',
+    'hrsh7th/cmp-path',
+    'norcalli/nvim-colorizer.lua',
+    'hrsh7th/cmp-cmdline',
+    'hrsh7th/nvim-cmp',
+    'saadparwaiz1/cmp_luasnip',
+    'L3MON4D3/LuaSnip',
+    "rafamadriz/friendly-snippets",
+    {'nvim-treesitter/nvim-treesitter' , build = ":TSUpdate"},
+})
 
 --lspserver Setup
 require("mason").setup {
@@ -93,7 +94,7 @@ if not configs.intelephense then
 end
 
 -- for arduino lsp server
-local MY_FQBN = "arduino:avr:nano"
+local MY_FQBN = "esp8266:esp8266:nodemcu"
 lspconfig.arduino_language_server.setup {
     cmd = {
         "arduino-language-server",

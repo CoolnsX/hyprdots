@@ -30,11 +30,23 @@ gtb () {
     unset br
 }
 
+holidays(){
+	printf 'Day		Date		Holiday
+
+Wednesday	8th March	Holi
+Friday		7th April	Good Friday
+Wednesday	30th August	Rakshabandhan
+Tuesday		15th August	Independence Day
+Monday		2nd October	Gandhi Jayanti
+Tuesday		24th October	Dussehra
+Sunday-Tuesday	12-14 November	Diwali & Bhai dooj\n' | bat -pp -l tsv
+}
+
 b64 () { printf "%s" "$1" | base64 $2; }
 
 url() {
 	[ -z "$2" ] && duration="1440" || duration=$2
-	out=$(curl https://oshi.at -F shorturl=0 -F "f=@$1" -F "expire=$duration") #1440 means 1 day duration
+	out=$(curl -k https://oshi.at -F shorturl=0 -F "f=@$1" -F "expire=$duration") #1440 means 1 day duration
 	[ -z "$out" ] && return 1
 	printf "%s" "$out" | sed -nE 's|DL: (.*)|\1|p' | wl-copy && notify-send "Link copied to clipboard";
 	wl-paste
@@ -70,10 +82,6 @@ v() {
 	[ -z "$*" ] && nvim -O $(fzf --preview 'bat --color=always --style=numbers --line-range=:500 {}' -m | tr '\n' ' ') || nvim -O $*
 }
 
-translate () {
-    curl -s "https://www.google.com/async/translate?vet=12ahUKEwjelf-f06v8AhUKzjgGHVe0CBkQqDh6BAgFECw..i&ei=8kC0Y97UDIqc4-EP1-iiyAE&yv=3&cs=0" -X POST -d "async=translate,sl:auto,tl:$1,st:$(jq -Rr '@uri' <<< $2),id:1672757511748,qc:true,ac:true,_id:tw-async-translate,_pms:s,_fmt:pc" -H "content-type:application/x-www-form-urlencoded;charset=UTF-8" | sed -nE 's|.*target-text">([^<]*)<.*romanization">([^<]*)<.*roman.*|translated : \1\nroman : \2|p'
-}
-
 help() {
 	"$@" --help 2>&1 | bat --plain --language=help
 }
@@ -98,7 +106,6 @@ export WM="hyprland"
 export IMAGE="nsxiv"
 alias cat="bat -pp"
 alias open="xdg-open"
-alias anime="$HOME/ani-cli/ani-cli"
 alias cp="cp -v"
 alias art="php artisan"
 alias rm="rm -v"
