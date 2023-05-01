@@ -26,6 +26,7 @@ application/x-shellscript=nvim.deskop
 text/x-c=nvim.deskop
 text/x-c++=nvim.deskop
 video/x-matroska=mpv.desktop
+application/json=nvim.desktop;
 
 [Added Associations]
 video/x-matroska=mpv.desktop;

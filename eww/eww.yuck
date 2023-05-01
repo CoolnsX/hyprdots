@@ -3,9 +3,9 @@
            :monitor 1
            :geometry (geometry :x "50px"
                                :y "50px"
-                               :width "23%"
+                               :width "25%"
                                :height "200px"
-                               :anchor "bottom right")
+                               :anchor "top right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"
@@ -16,9 +16,9 @@
            :monitor 0
            :geometry (geometry :x "50px"
                                :y "50px"
-                               :width "23%"
+                               :width "25%"
                                :height "200px"
-                               :anchor "bottom right")
+                               :anchor "top right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"
@@ -44,7 +44,7 @@
            :monitor 0
            :geometry (geometry :x "50"
                                :y "50"
-                               :width "30%"
+                               :width "35%"
                                :height "40px"
                                :anchor "bottom left")
            :stacking "bg"
@@ -57,7 +57,7 @@
            :monitor 1
            :geometry (geometry :x "50"
                                :y "50"
-                               :width "30%"
+                               :width "35%"
                                :height "40px"
                                :anchor "bottom left")
            :stacking "bg"

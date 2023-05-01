@@ -8,6 +8,8 @@ gtp(){
 }
 
 megamind() {
+	len=$(printf '%s' "$*" | wc -c)
+
 	printf "———————————%s———————————
 ⠀⣞⢽⢪⢣⢣⢣⢫⡺⡵⣝⡮⣗⢷⢽⢽⢽⣮⡷⡽⣜⣜⢮⢺⣜⢷⢽⢝⡽⣝
 ⠸⡸⠜⠕⠕⠁⢁⢇⢏⢽⢺⣪⡳⡝⣎⣏⢯⢞⡿⣟⣷⣳⢯⡷⣽⢽⢯⣳⣫⠇
@@ -22,7 +24,12 @@ megamind() {
 ⠀⠀⠀⣴⣿⣾⣿⣿⣿⡿⡽⡑⢌⠪⡢⡣⣣⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⡟⡾⣿⢿⢿⢵⣽⣾⣼⣘⢸⢸⣞⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-———————————————————————————————\n" "$*"
+——————————————————————" "$*"
+	for i in $(seq $len); do 
+		printf '—'
+	done
+	printf '\n'
+	unset len
 }
 gtb () {
     [ -z "$*" ] && br=$(git branch -a | fzf --border=rounded --layout=reverse --height=10 | tr -d ' ') || br=$*
@@ -42,7 +49,7 @@ Tuesday		24th October	Dussehra
 Sunday-Tuesday	12-14 November	Diwali & Bhai dooj\n' | bat -pp -l tsv
 }
 
-b64 () { printf "%s" "$1" | base64 $2; }
+b64 () { printf "%s" "$1" | base64 $2 $3; }
 
 url() {
 	[ -z "$2" ] && duration="1440" || duration=$2
@@ -63,8 +70,9 @@ url() {
 
 gtd () {
     preview="git diff $@ --color=always -- {-1}"
-    git diff $@ --name-only --relative | fzf --ansi --preview $preview --preview-window right:65%:wrap -0
-    unset preview
+    file=$(git diff $@ --name-only --relative | fzf --ansi --preview $preview --preview-window right:65%:wrap -0)
+    [ -n "$file" ] && nvim $file
+    unset preview file
 }
 
 gtc () { [ -z "$*" ] && [ -p "/dev/stdin" ] && read -r query </dev/stdin || query=$*; git clone "$query"; }
@@ -104,7 +112,7 @@ export OPENER="xdg-open"
 export VIDEO="mpv"
 export WM="hyprland"
 export IMAGE="nsxiv"
-alias cat="bat -pp"
+alias cat="bat -pp --color=always"
 alias open="xdg-open"
 alias cp="cp -v"
 alias art="php artisan"
@@ -131,3 +139,4 @@ compinit
 zstyle ':completion:*' menu select
 eval "$(starship init zsh)"
 [ -f "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.config/fzf-tab/fzf-tab.plugin.zsh

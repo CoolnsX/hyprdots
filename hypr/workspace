@@ -5,7 +5,7 @@ setup_dual_monitor(){
 	sleep 2
 	if hyprctl monitors | grep -q "HDMI-A-1";then
 		notify-send "Setting up dual monitor workflow"
-		wlr-randr --output 'HDMI-A-1' --custom-mode '1920x1080'
+		wlr-randr --output 'HDMI-A-1' --custom-mode '1900x1080@60'
                 for i in $(seq 2 4);do
 		  hyprctl dispatch moveworkspacetomonitor "$i 0"
                 done

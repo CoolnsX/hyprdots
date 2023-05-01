@@ -17,18 +17,21 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   })
 end
-vim.opt.rtp:prepend(lazypath)
+set.rtp:prepend(lazypath)
 require('lazy').setup({
     'wbthomason/packer.nvim',
     { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } },
     'https://gitlab.com/__tpb/monokai-pro.nvim',
     { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig", },
-    {
+    	{
     		"adalessa/laravel.nvim",
     		dependencies = {
     		    "nvim-telescope/telescope.nvim",
     		},
-    		cmd = {"Artisan", "Composer"},
+    		cmd = {"Sail", "Artisan", "Composer"},
+    		keys = {
+    		    {"<leader>pa", ":Artisan<cr>"},
+    		},
     		config = function()
     		    require("laravel").setup()
     		    require("telescope").load_extension("laravel")
@@ -44,6 +47,7 @@ require('lazy').setup({
     'mfussenegger/nvim-dap',
     'hrsh7th/cmp-buffer',
     'hrsh7th/cmp-path',
+    'mfussenegger/nvim-dap-python',
     'norcalli/nvim-colorizer.lua',
     'hrsh7th/cmp-cmdline',
     'hrsh7th/nvim-cmp',
@@ -98,7 +102,7 @@ local MY_FQBN = "esp8266:esp8266:nodemcu"
 lspconfig.arduino_language_server.setup {
     cmd = {
         "arduino-language-server",
-        "-cli-config", "/path/to/arduino-cli.yaml",
+        "-cli-config", "$HOME/.arduino15/arduino-cli.yaml",
         "-fqbn",
         MY_FQBN
     }
@@ -106,7 +110,7 @@ lspconfig.arduino_language_server.setup {
 
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'bashls', 'pyright', 'lua_ls', 'clangd','intelephense','phpactor' }
+local servers = { 'bashls', 'pyright', 'lua_ls', 'clangd','intelephense','phpactor' , 'html' ,'cssls'}
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
 	  capabilities = capabilities,
