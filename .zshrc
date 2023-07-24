@@ -40,10 +40,8 @@ gtb () {
 holidays(){
 	printf 'Day		Date		Holiday
 
-Wednesday	8th March	Holi
-Friday		7th April	Good Friday
-Wednesday	30th August	Rakshabandhan
 Tuesday		15th August	Independence Day
+Wednesday	30th August	Rakshabandhan
 Monday		2nd October	Gandhi Jayanti
 Tuesday		24th October	Dussehra
 Sunday-Tuesday	12-14 November	Diwali & Bhai dooj\n' | bat -pp -l tsv
@@ -125,6 +123,7 @@ alias ll="ls --color=auto -alh"
 alias ls="ls --color=auto"
 alias fetch='/bin/*fetch'
 alias nchh="nvim ~/.config/hypr/hyprland.conf"
+alias shfmt="shfmt -ci -d -w"
 
 clshist
 HISTFILE=~/.histfile

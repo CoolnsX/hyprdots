@@ -1,6 +1,8 @@
 #!/bin/sh
 
-for i in $(seq 5);do 
-	notify-send -i "/usr/share/icons/Papirus/16x16/panel/clockify-blue.svg" "$(date)" -r 3 -t 1200 &
+i=5
+while [ $i -gt 0 ];do 
+	notify-send -i "/usr/share/icons/Papirus/16x16/panel/clockify-blue.svg" "$(date)" -h "string:x-canonical-private-synchronous:date" -t 1200 &
 	sleep 1
+	: $((i-=1))
 done
