@@ -1,51 +1,58 @@
 #!/bin/sh
 
-out=$(echo '{ "command": ["get_property", "pause"]}' | socat - /tmp/mpvsocket 2>/dev/null)
+out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - /tmp/mpvsocket 2>/dev/null)
 case $1 in
 	song)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
 			cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|-$||'
 		else
-			echo "Offline"
+			printf "Music widget by Coolans X"
 		fi
 		;;
 	artist)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
 			cut -d'>' -f1 < "/tmp/yt-music/current" | sed 's_.* -__'
 		else
-			echo "Offline"
+			printf "Offline"
 		fi
 		;;
 	cover)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			echo "/tmp/yt-music/default.jpg"
+			printf "/tmp/yt-music/default.jpg"
 		else
-			echo "$HOME/.config/eww/music.png"
+			printf "%s/.config/eww/music.png" "$HOME"
 		fi
 		;;
 	status)
 		if [ -z "$out" ];then
 			printf ""
 		elif printf "%s" "$out" | grep -q "true";then
-			echo "喇"
+			printf "喇"
 		else
-			echo ""
+			printf ""
 		fi
 		;;
 	play_toggle)
 		echo cycle pause | socat - "/tmp/mpvsocket"
 		;;
 	next)
-		pgrep -f mpvsocket >/dev/null 2>&1 && /home/tanveer/repos_scripts/yt-music play_next
+		pgrep -f mpvsocket >/dev/null 2>&1 && "$HOME/repos_scripts/yt-music" play_next
 		;;
 	prev)
-		pgrep -f mpvsocket >/dev/null 2>&1 && ($HOME/repos_scripts/yt-music play "$(sed 's| >|\t|g' /tmp/yt-music/prev | cut -d':' -f2)")
+		pgrep -f mpvsocket >/dev/null 2>&1 && ("$HOME/repos_scripts/yt-music" play "$(sed 's| >|\t|g' /tmp/yt-music/prev | cut -d':' -f2)")
 		;;
 	time)
 		out=$(echo '{"command" :["get_property" , "percent-pos"]}' | socat - /tmp/mpvsocket 2>/dev/null | sed -nE 's_.*data":([^,]*).*_\1_p')
-		[ -z "$out" ] && echo "100" || echo "$out"
+		printf '%s' "${out:-100}"
 		;;
 	seek)
 		echo "{\"command\" :[\"seek\" ,\"$2\",\"relative-percent\"]}" | socat - /tmp/mpvsocket
+		;;
+	lyrics)
+		if [ -f "/tmp/yt-music/lyrics" ]; then
+			sed -n "/^$(awk -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - /tmp/mpvsocket | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1000 {print $1;exit}' /tmp/yt-music/lyrics)\t/p" /tmp/yt-music/lyrics | cut -f2
+		else
+			printf "Lyrics By musixmatch"
+		fi
 		;;
 esac

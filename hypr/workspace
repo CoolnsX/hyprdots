@@ -1,14 +1,14 @@
 #!/bin/sh
 
 setup_dual_monitor(){
-	sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,highres,auto,1/g" "$HOME/.config/hypr/hyprland.conf"
+	sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,preferred,auto,1/g" "$HOME/.config/hypr/hyprland.conf"
 	sleep 2
 	if hyprctl monitors | grep -q "HDMI-A-1";then
 		notify-send "Setting up dual monitor workflow"
-                for i in $(seq 2 4);do
-		  hyprctl dispatch moveworkspacetomonitor "$i 0"
-                done
-		hyprctl dispatch moveworkspacetomonitor "1 1"
+		hyprctl dispatch moveworkspacetomonitor "2 1"
+		hyprctl dispatch moveworkspacetomonitor "3 1"
+		hyprctl dispatch moveworkspacetomonitor "1 0"
+		hyprctl dispatch moveworkspacetomonitor "4 0"
 		eww kill
 		eww open-many time_1 music_1
 	fi
@@ -17,12 +17,12 @@ setup_dual_monitor(){
 handle_it(){
 	[ -z "$1" ] || notify-send "$1"
 	choice=$(printf "Mirror\nExtend" | bemenu --fn 'Roboto 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1)
-	[ -z "$choice" ] && exit 0
+	[ -z "$choice" ] && return 0
 	notify-send "${choice}ing screen"
 	if [ "$choice" = "Extend" ];then
 		setup_dual_monitor
 	else
-		sed -i "s/monitor=,highres,auto,1/monitor=,1920x1080,0x0,1,mirror,eDP-1/g" "$HOME/.config/hypr/hyprland.conf"
+		sed -i "s/monitor=,preferred,auto,1/monitor=,1920x1080,0x0,1,mirror,eDP-1/g" "$HOME/.config/hypr/hyprland.conf"
 	fi
 }
 
@@ -30,14 +30,14 @@ case $1 in
 	list)
 		#only lists the open applications with their workspace number so u can safely close them
 		for i in $(seq 4);do
-			notify-send -i "lol" "$(hyprctl clients | sed -nE 's_.*class: ([^ ]*).*_\1_p;s_.*workspace: ([^ ]*).*_workspace \1 : _p' | sed 'N;s/\n/ /')" -h "string:x-canonical-private-synchronous:workspace" -t 1500
+			notify-send -i "lol" "$(hyprctl clients | sed -nE 's_.*class: ([^ ]*).*_\1_p;s_.*workspace: ([^ ]*).*_workspace \1 : _p' | sed 'N;s/\n/ /')" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500
 			sleep 1
 		done ;;
 	focus)
 		#shows the workspace number as notification whenever u switch workspaces and also handles the dual monitor setup on the fly(perfect for laptop users)
 		socat - "UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line;do 
 			printf "%s" "$line" | grep -q "monitoradded" && handle_it "$line"
-			printf "%s" "$line" | grep -q "monitorremoved" && sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,highres,auto,1/g" "$HOME/.config/hypr/hyprland.conf" && eww kill && eww open_many time_0 music_0
+			printf "%s" "$line" | grep -q "monitorremoved" && sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,preferred,auto,1/g" "$HOME/.config/hypr/hyprland.conf" && eww kill && eww open_many time_0 music_0
 			#recent workspace switcher
 			current=$(printf "%s" "$line" | sed -nE 's_^(workspace)>>([^ ]*)_\1 \2_p')
 			if [ -n "$current" ];then

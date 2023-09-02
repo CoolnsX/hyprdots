@@ -6,4 +6,4 @@ else
 	nmcli radio wifi on
 	wifi_icon="acquiring"
 fi
-notify-send -i "/usr/share/icons/Papirus/16x16/panel/network-wireless-$wifi_icon.svg" "wifi $(nmcli radio wifi)" -h "string:x-canonical-private-synchronous:wifi"
+notify-send -i "/usr/share/icons/Papirus/16x16/panel/network-wireless-$wifi_icon.svg" "wifi $(nmcli radio wifi)" -h "string:x-canonical-private-synchronous:${0##*/}"
