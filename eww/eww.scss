@@ -3,17 +3,11 @@
 }
 
 
-/** Background ***************************************/
-.bg {
-	background-color: rgba(0,0,0,0);
-	opacity: 0;
-}
-
 /** Generic window ***********************************/
 .genwin {
 	//background-color: rgba(39, 40, 34, 0.7);
 	background-color: rgba(0,0,0,0);
-	border-radius: 16px;
+	border-radius: 8rem;
 }
 
 /** Clock ********************************************/
@@ -28,14 +22,12 @@
 .time_min {
 	margin : 0px 0px 10px 0px;
 }
-
 .time_mer {
 	color: #A3BE8C;
 	font-size : 40px;
 	font-weight : bold;
 	margin : 20px 0px 0px 0px;
 }
-
 .time_day {
 	color: #EBCB8B;
 	font-size : 30px;
@@ -43,60 +35,35 @@
 	margin : 0px 0px 20px 0px;
 }
 
-/** Music ***************************************/
-.album_art {
-	background-size: cover;
-	background-repeat:no-repeat;
-	background-color: rgba(0,0,0,0);
-	min-height: 240px;
-	min-width: 240px;
-	margin: 0px 50px 0px 0px;
-	border-radius: 15px;
-	border-style:none;
-}
-
+/** Music ********************************************/
 .song {
 	color: #8FBCBB;
 	font-size : 24px;
 	font-weight : bold;
 	margin : 10px 0px 0px 0px;
 }
-
 .artist {
 	color: #EBCB8B;
 	font-size : 20px;
 	font-weight : normal;
-	margin : 0px 0px 0px 0px;
 }
-
 .btn_play {
-	margin : 0px 0px 0px 0px;
 	color: #A3BE8C;
 	font-family: IosevkaTerm Nerd Font Mono;
 	font-size : 70px;
 }
-
-.btn_prev {
+.btn_play:hover {
+	color: #A2A852;
+}
+.btn_controls {
 	color: #EBCB8B;
 	font-size : 32px;
-	font-weight : normal;
+	font-family: IosevkaTerm Nerd Font Mono;
 }
-
-.btn_next {
-	color: #EBCB8B;
-	font-size : 32px;
-	font-weight : normal;
+.btn_controls:hover {
+	font-size : 50px;
 }
-
-.music_bar scale trough highlight {
-	all: unset;
-	background-image: linear-gradient(to right, #77a5bf 30%, #91bdce 50%, #afcee0 100% *50);
-	border-radius: 24px;
-}
-.music_bar scale trough {
-	background-color: #232232;
-	border-radius: 24px;
-	min-height: 13px;
-	min-width: 190px;
-	margin : 0px 0px 10px 0px;
+.music_bar {
+	color: #81A1C1;
+	background-color: rgba(0,0,0,0.1);
 }

@@ -6,12 +6,12 @@ case $1 in
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
 			cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|-$||'
 		else
-			printf "Music widget by Coolans X"
+			printf "OFFLINE"
 		fi
 		;;
 	artist)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			cut -d'>' -f1 < "/tmp/yt-music/current" | sed 's_.* -__'
+			cut -d'>' -f1 < "/tmp/yt-music/current" | sed 's_.* -__;s| $||'
 		else
 			printf "Offline"
 		fi
@@ -38,6 +38,9 @@ case $1 in
 	next)
 		pgrep -f mpvsocket >/dev/null 2>&1 && "$HOME/repos_scripts/yt-music" play_next
 		;;
+	next_song)
+		sed -n "$(cat /tmp/yt-music/counter){n;p}" /tmp/yt-music/next | cut -f1
+		;;
 	prev)
 		pgrep -f mpvsocket >/dev/null 2>&1 && ("$HOME/repos_scripts/yt-music" play "$(sed 's| >|\t|g' /tmp/yt-music/prev | cut -d':' -f2)")
 		;;
@@ -52,7 +55,7 @@ case $1 in
 		if [ -f "/tmp/yt-music/lyrics" ]; then
 			sed -n "/^$(awk -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - /tmp/mpvsocket | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1000 {print $1;exit}' /tmp/yt-music/lyrics)\t/p" /tmp/yt-music/lyrics | cut -f2
 		else
-			printf "Lyrics By musixmatch"
+			printf "Lyrics will show here"
 		fi
 		;;
 esac
