@@ -40,12 +40,13 @@
 	color: #8FBCBB;
 	font-size : 24px;
 	font-weight : bold;
-	margin : 10px 0px 0px 0px;
+	margin : 30px 0px 0px 0px;
 }
 .artist {
 	color: #EBCB8B;
 	font-size : 20px;
 	font-weight : normal;
+	margin : 0px 0px -20px 0px;
 }
 .btn_play {
 	color: #A3BE8C;
@@ -62,6 +63,10 @@
 }
 .btn_controls:hover {
 	font-size : 50px;
+}
+.lyrics {
+	color: #EBCB8B;
+	margin : -10px 0px 0px 0px;
 }
 .music_bar {
 	color: #81A1C1;

@@ -4,7 +4,7 @@ out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - /tmp/mpvsocke
 case $1 in
 	song)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|-$||'
+			cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|[-| ]$||'
 		else
 			printf "OFFLINE"
 		fi
