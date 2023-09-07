@@ -5,10 +5,10 @@ setup_dual_monitor(){
 	sleep 2
 	if hyprctl monitors | grep -q "HDMI-A-1";then
 		notify-send "Setting up dual monitor workflow"
-		hyprctl dispatch moveworkspacetomonitor "2 1"
-		hyprctl dispatch moveworkspacetomonitor "3 1"
 		hyprctl dispatch moveworkspacetomonitor "1 0"
-		hyprctl dispatch moveworkspacetomonitor "4 0"
+		hyprctl dispatch moveworkspacetomonitor "2 0"
+		hyprctl dispatch moveworkspacetomonitor "3 0"
+		hyprctl dispatch moveworkspacetomonitor "4 1"
 		eww kill
 		eww open-many time_1 music_1
 	fi

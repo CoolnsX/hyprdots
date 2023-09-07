@@ -23,20 +23,7 @@ require('lazy').setup({
     { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } },
     'https://gitlab.com/__tpb/monokai-pro.nvim',
     { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig", },
-    	{
-    		"adalessa/laravel.nvim",
-    		dependencies = {
-    		    "nvim-telescope/telescope.nvim",
-    		},
-    		cmd = {"Sail", "Artisan", "Composer"},
-    		keys = {
-    		    {"<leader>pa", ":Artisan<cr>"},
-    		},
-    		config = function()
-    		    require("laravel").setup()
-    		    require("telescope").load_extension("laravel")
-    		end
-	},
+     { "nvim-telescope/telescope.nvim" },
     {
     	"windwp/nvim-autopairs",
     	config = function() require("nvim-autopairs").setup {} end

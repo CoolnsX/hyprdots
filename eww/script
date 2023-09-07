@@ -1,36 +1,34 @@
 #!/bin/sh
 
-out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - /tmp/mpvsocket 2>/dev/null)
 case $1 in
-	song)
+	songdata)
+		out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - /tmp/mpvsocket 2>/dev/null)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|[-| ]$||'
+			printf '{"name":"%s","artist":"%s","cover":"/tmp/yt-music/default.jpg","next":"%s"}' "$(cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|-$||;s| $||;s|^ ||')" "$(cut -d'>' -f1 < "/tmp/yt-music/current" | sed 's_.* - __;s| $||')" "$(sed -n "/$(cut -d'>' -f2 < /tmp/yt-music/current )/{n;p}" /tmp/yt-music/next | cut -f1)"
 		else
-			printf "OFFLINE"
-		fi
-		;;
-	artist)
-		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			cut -d'>' -f1 < "/tmp/yt-music/current" | sed 's_.* -__;s| $||'
-		else
-			printf "Offline"
-		fi
-		;;
-	cover)
-		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			printf "/tmp/yt-music/default.jpg"
-		else
-			printf "%s/.config/eww/music.png" "$HOME"
+			printf '{"name":"OFFLINE","artist":"offline","cover":"%s/.config/eww/music.png"}' "$HOME"
 		fi
 		;;
 	status)
+		out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - /tmp/mpvsocket 2>/dev/null)
 		if [ -z "$out" ];then
 			printf ""
 		elif printf "%s" "$out" | grep -q "true";then
-			printf "喇"
+			printf "󰐌"
 		else
-			printf ""
+			printf "󰏥"
 		fi
+		;;
+	lyrics)
+		if [ -f "/tmp/yt-music/lyrics" ]; then
+			awk -F'\t' -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - /tmp/mpvsocket | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1000 {print $2;exit}' /tmp/yt-music/lyrics
+		else
+			printf "Lyrics will show here"
+		fi
+		;;
+	time)
+		out=$(echo '{"command" :["get_property" , "percent-pos"]}' | socat - /tmp/mpvsocket 2>/dev/null | sed -nE 's_.*data":([^,]*).*_\1_p')
+		printf '%s' "${out:-100}"
 		;;
 	play_toggle)
 		echo cycle pause | socat - "/tmp/mpvsocket"
@@ -44,18 +42,7 @@ case $1 in
 	prev)
 		pgrep -f mpvsocket >/dev/null 2>&1 && ("$HOME/repos_scripts/yt-music" play "$(sed 's| >|\t|g' /tmp/yt-music/prev | cut -d':' -f2)")
 		;;
-	time)
-		out=$(echo '{"command" :["get_property" , "percent-pos"]}' | socat - /tmp/mpvsocket 2>/dev/null | sed -nE 's_.*data":([^,]*).*_\1_p')
-		printf '%s' "${out:-100}"
-		;;
 	seek)
 		echo "{\"command\" :[\"seek\" ,\"$2\",\"relative-percent\"]}" | socat - /tmp/mpvsocket
-		;;
-	lyrics)
-		if [ -f "/tmp/yt-music/lyrics" ]; then
-			sed -n "/^$(awk -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - /tmp/mpvsocket | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1000 {print $1;exit}' /tmp/yt-music/lyrics)\t/p" /tmp/yt-music/lyrics | cut -f2
-		else
-			printf "Lyrics will show here"
-		fi
 		;;
 esac

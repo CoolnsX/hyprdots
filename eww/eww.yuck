@@ -25,19 +25,16 @@
            :wm-ignore false
      (clock))
 
-(defpoll HOUR :interval "2s" `date +'%I'`)
-(defpoll MIN :interval "2s" `date +'%M'`)
-(defpoll MER :interval "2s" `date +'%p'`)
-(defpoll DAY :interval "5s" `date +'%A'`)
+(defpoll CLOCK :interval "4s" "date +'{\"hour\": \"%I\" ,\"min\": \"%M\" ,\"mer\" : \"%p\",\"day\" : \"%A\" }'")
 
 (defwidget clock [] 
       (box :class "genwin" :orientation "h" :spacing 50 :space-evenly false :vexpand "false" :hexpand "false" 
             (box :orientation "h" :spacing 0
-                  (label :class "time_hour" :valign "start" :wrap "true" :limit-width 25 :text HOUR)
-                  (label :class "time_min" :valign "end" :wrap "true" :limit-width 25 :text MIN))
+                  (label :class "time_hour" :valign "start" :wrap "true" :limit-width 25 :text "${CLOCK.hour}")
+                  (label :class "time_min" :valign "end" :wrap "true" :limit-width 25 :text "${CLOCK.min}"))
             (box :orientation "v" :spacing 0 :space-evenly true
-                  (label :class "time_mer" :valign "start" :halign "end" :wrap "true" :limit-width 25 :text MER)
-                  (label :class "time_day" :valign "end" :halign "end" :wrap "true" :limit-width 25 :text DAY))))
+                  (label :class "time_mer" :valign "start" :halign "end" :wrap "true" :limit-width 25 :text "${CLOCK.mer}")
+                  (label :class "time_day" :valign "end" :halign "end" :wrap "true" :limit-width 25 :text "${CLOCK.day}"))))
 
 ;; music
 (defwindow music_0
@@ -66,25 +63,23 @@
            :wm-ignore true
      (music))
 
-(defpoll SONG :interval "2s" `./script song`)
-(defpoll ARTIST :interval "2s" `./script artist`)
-(defpoll STATUS :interval "0.4s" `./script status`)
-(defpoll COVER :interval "2s" `./script cover`)
-(defpoll CURRENT :interval "0.4s" `./script time`)
-(defpoll LYRICS :interval "0.4s" `./script lyrics`)
+(defpoll song :interval "2s" "./script songdata")
+(defpoll STATUS :interval "0.4s" "./script status")
+(defpoll CURRENT :interval "0.4s" "./script time")
+(defpoll LYRICS :interval "0.4s" "./script lyrics")
 
 (defwidget music []
       (box :class "genwin" :orientation "h" :spacing 50 :space-evenly "false" :vexpand "false" :hexpand "false" 
             (box :class "box_art" :vexpand "false" :hexpand "false"
-                  (circular-progress :class "music_bar" :value CURRENT :thickness 10 :clockwise true :start-at 75 
-                        (image :path COVER :image-height 300 :image-width 300)))
+                  (circular-progress :class "music_bar" :value CURRENT :thickness 10 :clockwise true :start-at "${(CURRENT+75)%100}"
+                        (image :path "${song.cover}" :image-height 270 :image-width 270)))
             (box :orientation "v" :spacing 20 :space-evenly "false" :vexpand "false" :hexpand "false" 
-                  (label :halign "center" :class "song" :wrap "false" :limit-width 30 :text SONG)
-                  (label :halign "center" :class "artist" :wrap "false" :text ARTIST)
-                  (box :orientation "h" :spacing 30 :halign "center" :space-evenly "true" :vexpand "false" :hexpand "false" 
-                        (button :class "btn_controls" :onclick "./script prev" "玲")
+                  (label :tooltip "${song.name}" :halign "center" :class "song" :wrap "false" :limit-width 20 :text "${song.name}")
+                  (label :halign "center" :class "artist" :wrap "false" :limit-width 20 :text "${song.artist}")
+                  (box :orientation "h" :spacing 35 :halign "center" :space-evenly "true" :vexpand "false" :hexpand "false" 
+                        (button :class "btn_controls" :onclick "./script prev" "󰒮")
                         (button :class "btn_controls" :onclick "./script seek '-1'" "")
                         (button :class "btn_play" :onclick "./script play_toggle" STATUS)
                         (button :class "btn_controls" :onclick "./script seek '1'" "")
-                        (button :class "btn_controls" :onclick "./script next" "怜"))
-                  (label :halign "center" :wrap "true" :class "lyrics" :text LYRICS))))
+                        (button :class "btn_controls" :tooltip "Upcoming : ${song.next}" :onclick "./script next" "󰒭"))
+                  (label :justify "left" :wrap "true" :class "lyrics" :text LYRICS))))
