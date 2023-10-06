@@ -4,7 +4,7 @@ case $1 in
 	songdata)
 		out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - /tmp/yt-music/yt-music-mpvsocket 2>/dev/null)
 		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			printf '{"name":"%s","artist":"%s","cover":"/tmp/yt-music/default.jpg","next":"%s","prev":"%s"}' "$(cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2 | sed 's|[^-]*$||;s|-$||;s| $||;s|^ ||')" "$(cut -d'>' -f1 < "/tmp/yt-music/current" | sed 's_.* - __;s| $||')" "$(sed -n "/$(cut -d'>' -f2 < /tmp/yt-music/current )/{n;p}" /tmp/yt-music/next | cut -f1)" "$(sed -n "$(cat /tmp/yt-music/counter)p" /tmp/yt-music/next | cut -f1)"
+			printf '{"name":"%s","artist":"%s","cover":"/tmp/yt-music/default.jpg","next":"%s","prev":"%s"}' "$(cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2- | sed 's|[^-]*$||;s|-$||;s| $||;s|^ ||')" "$(cut -d'>' -f1 < "/tmp/yt-music/current" | sed 's_.* - __;s| $||')" "$(sed -n "/$(cut -d'>' -f2 < /tmp/yt-music/current )/{n;p}" /tmp/yt-music/next | cut -f1)" "$(sed -n "$(cat /tmp/yt-music/counter)p" /tmp/yt-music/next | cut -f1)"
 		else
 			printf '{"name":"OFFLINE","artist":"offline","cover":"%s/.config/eww/music.png"}' "$HOME"
 		fi
@@ -21,7 +21,7 @@ case $1 in
 		;;
 	lyrics)
 		if [ -f "/tmp/yt-music/lyrics" ]; then
-			awk -F'\t' -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - /tmp/yt-music/yt-music-mpvsocket | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1002 {print $2;exit}' /tmp/yt-music/lyrics
+			awk -F'\t' -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - /tmp/yt-music/yt-music-mpvsocket | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1005 {print $2;exit}' /tmp/yt-music/lyrics
 		else
 			printf "Lyrics will show here"
 		fi

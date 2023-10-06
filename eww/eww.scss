@@ -40,7 +40,7 @@
 	color: #8FBCBB;
 	font-size : 24px;
 	font-weight : bold;
-	margin : 20px 0px 0px 0px;
+	margin : 30px 0px 0px 0px;
 }
 .artist {
 	color: #EBCB8B;
@@ -50,7 +50,7 @@
 }
 .btn_play {
 	color: #A3BE8C;
-	font-family: IosevkaTerm Nerd Font Mono;
+	font-family: IosevkaTerm Nerd Font;
 	font-size : 70px;
 }
 .btn_play:hover {
@@ -59,7 +59,7 @@
 .btn_controls {
 	color: #EBCB8B;
 	font-size : 32px;
-	font-family: IosevkaTerm Nerd Font Mono;
+	font-family: IosevkaTerm Nerd Font;
 }
 .btn_controls:hover {
 	font-size : 50px;
@@ -67,6 +67,8 @@
 .lyrics {
 	color: #EBCB8B;
 	margin : -20px 0px 0px 0px;
+	font-family: IBM Plex Sans Text;
+	font-size : 18px;
 }
 .music_bar {
 	color: #81A1C1;

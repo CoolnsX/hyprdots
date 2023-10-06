@@ -1,0 +1,41 @@
+#compdef yt-music
+
+local -a subcmds
+subcmds=(
+    'search_play:searches first, then plays the music in mpv'
+    'play:plays the music in mpv'
+    'play_next:plays the next music in /tmp/yt-music/next file'
+    'loop:plays the next music after the current is finished (run it as a background process)'
+)
+
+local -a play_next_args
+play_next_args=(
+    'menu:menu:Show music list to choose from'
+)
+
+local -a loop_args
+loop_args=(
+    'print:print:show what is going on'
+)
+
+local subcmd
+
+if (( $#words > 3 )); then
+    return 1
+fi
+
+subcmd=${words[2]}
+
+case $subcmd in
+    (play_next)
+        # For 'play_next', add 'menu' as an option
+        _describe -t play_next_args 'subcommand arguments' play_next_args && return ;;
+    (loop)
+        # For 'loop', add 'print' as an option
+        _describe -t loop_args 'subcommand arguments' loop_args && return ;;
+    (play|search_play)
+        return ;;
+esac
+
+# Describe the available subcommands
+_describe 'command' subcmds

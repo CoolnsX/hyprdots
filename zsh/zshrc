@@ -1,0 +1,154 @@
+#user-defined functions
+
+hex_to_string() {
+	for hex in $(printf '%s' "$1" | sed 's/../&\n/g'); do
+		[ "$hex" = "00" ] && continue
+		printf "\x$hex"
+	done
+	unset hex
+}
+
+gtp() {
+	[ -z "$*" ] && commit=$(curl -s "https://raw.githubusercontent.com/ngerakines/commitment/master/commit_messages.txt" | shuf -n1) || commit=$*
+	git add -p
+	git commit -m "$commit"
+	git push
+	unset commit
+}
+
+megamind() {
+	len=$(printf '%s' "$*" | wc -c)
+
+	printf "———————————%s———————————
+⠀⣞⢽⢪⢣⢣⢣⢫⡺⡵⣝⡮⣗⢷⢽⢽⢽⣮⡷⡽⣜⣜⢮⢺⣜⢷⢽⢝⡽⣝
+⠸⡸⠜⠕⠕⠁⢁⢇⢏⢽⢺⣪⡳⡝⣎⣏⢯⢞⡿⣟⣷⣳⢯⡷⣽⢽⢯⣳⣫⠇
+⠀⠀⢀⢀⢄⢬⢪⡪⡎⣆⡈⠚⠜⠕⠇⠗⠝⢕⢯⢫⣞⣯⣿⣻⡽⣏⢗⣗⠏⠀
+⠀⠪⡪⡪⣪⢪⢺⢸⢢⢓⢆⢤⢀⠀⠀⠀⠀⠈⢊⢞⡾⣿⡯⣏⢮⠷⠁⠀⠀
+⠀⠀⠀⠈⠊⠆⡃⠕⢕⢇⢇⢇⢇⢇⢏⢎⢎⢆⢄⠀⢑⣽⣿⢝⠲⠉⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⡿⠂⠠⠀⡇⢇⠕⢈⣀⠀⠁⠡⠣⡣⡫⣂⣿⠯⢪⠰⠂⠀⠀⠀⠀
+⠀⠀⠀⠀⡦⡙⡂⢀⢤⢣⠣⡈⣾⡃⠠⠄⠀⡄⢱⣌⣶⢏⢊⠂⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢝⡲⣜⡮⡏⢎⢌⢂⠙⠢⠐⢀⢘⢵⣽⣿⡿⠁⠁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠨⣺⡺⡕⡕⡱⡑⡆⡕⡅⡕⡜⡼⢽⡻⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣼⣳⣫⣾⣵⣗⡵⡱⡡⢣⢑⢕⢜⢕⡝⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣴⣿⣾⣿⣿⣿⡿⡽⡑⢌⠪⡢⡣⣣⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⡟⡾⣿⢿⢿⢵⣽⣾⣼⣘⢸⢸⣞⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+——————————————————————" "$*"
+	for i in $(seq $len); do
+		printf '—'
+	done
+	printf '\n'
+	unset len
+}
+gtb() {
+	[ -z "$*" ] && br=$(git branch -a | fzf --border=rounded --layout=reverse --height=10 | tr -d ' ') || br=$*
+	[ -z "$br" ] || git checkout $br
+	unset br
+}
+
+b64() { 
+	# base64 wrapper , also converts url base64
+	printf "%s" "$1" | tr "._-" '=/+' | base64 -w 0 $2
+}
+
+url_oshi() {
+	days=${2:-1}
+	out=$(curl -k https://oshi.at -F shorturl=0 -F "f=@$1" -F "expire=$((days * 1440))") #1440 means 1 day duration
+	[ -z "$out" ] && return 1
+	printf "%s" "$out" | sed -nE 's|DL: (.*)|\1|p' | wl-copy && notify-send "Link copied to clipboard"
+	wl-paste
+	curr=$(date '+%s')
+	#storing only long duration links
+	[ -z "$2" ] && printf "%s\n%s" "$out" "$((curr + (86400 * days)))" | tr '\n' '>' | sed 's/>/ | /g' >>$HOME/.cache/oshi-urls
+
+	#deleting file uploaded than nth day ago
+	for i in $(cut -d'|' -f3 $HOME/.cache/oshi-urls | tr -d ' '); do
+		[ "$curr" -ge "$i" ] && sed -i "/$i/d" $HOME/.cache/oshi-urls &
+	done
+	echo >>$HOME/.cache/oshi-urls
+}
+
+url_nextcloud() {
+	[ ! -f "$HOME/.secrets" ] && notify-send "Credentials not found" -u critical && return 1
+	source "$HOME"/.secrets
+	curl "$NC_HOST/remote.php/dav/files/${NC_USER}${NC_FOLDER_PATH}/$(basename "$1")" -H "Authorization: Basic $NC_AUTH" -T "$1"
+
+	#To enable sharing, the output will be in json containing share link
+	curl -s -H "Authorization: Basic $NC_AUTH" "$NC_HOST/ocs/v2.php/apps/files_sharing/api/v1/shares" -H 'content-type: application/json' -H 'accept: application/json, text/plain, */*' -H 'OCS-APIRequest: true' --data-raw "{\"path\":\"${NC_FOLDER_PATH}/$(basename "$1")\",\"shareType\":3,\"attributes\":\"[]\"}" | sed -nE 's|.*"url":"([^"]*)".*|\1|p' | sed 's/\\//g' | wl-copy && notify-send "Link copied to clipboard"
+	unset NC_HOST NC_USER NC_FOLDER_PATH NC_AUTH
+}
+
+gtd() {
+	preview="git diff $@ --color=always -- {-1}"
+	file=$(git diff $@ --name-only --relative | fzf --ansi --preview $preview --preview-window right:65%:wrap -0)
+	[ -n "$file" ] && nvim $file
+	unset preview file
+}
+
+gtc() {
+	[ -z "$1" ] && [ -p "/dev/stdin" ] && read -r query </dev/stdin || query=$1
+	git clone "$query"
+}
+
+gtr() {
+	[ -z "$1" ] && [ -p "/dev/stdin" ] && read -r query </dev/stdin || query=$1
+	curl -s "https://api.github.com/users/$query/repos" | sed -nE 's|.*ssh_url": "([^"]*)".*|\1|p' | fzf --border --height=10 --layout=reverse -0
+}
+
+gtu() { [ -z "$1" ] || curl -s "https://api.github.com/search/users?q=$1" | sed -nE 's_.*login": "([^"]*)".*_\1_p' | fzf --layout=reverse --border --height=10 -0; }
+
+clshist() {
+	a=$(cat ~/.histfile | wc -l)
+	[ "$a" -gt $HISTSIZE ] && sed -i "1,$((a - HISTSIZE))d" ~/.histfile
+}
+
+v() {
+	[ -z "$*" ] && nvim -O $(fzf --preview 'bat --color=always --style=numbers --line-range=:500 {}' -m | tr '\n' ' ') || nvim -O $*
+}
+
+help() {
+	"$@" --help 2>&1 | bat --plain --language=help
+}
+
+addpkg() {
+	[ -z "$*" ] && printf "\033[1;31mPlease write the name of package (just some words)..\033[0m" && return 1
+	paru -Ss "$*" | sed -nE 's|^([a-z]*)/([^ ]*).*|[\1] \2|p' | fzf --layout=reverse --border --preview 'paru -Si $(echo {} | cut -d" " -f2) | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap -m | cut -d' ' -f2- | paru -S -
+}
+
+rmpkg() {
+	paru -Qq | fzf --preview 'paru -Si {} | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap -m | paru -Rcns -
+}
+
+# Lines configured by zsh-newuser-install
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+alias cat="bat -pp --color=always"
+alias open="xdg-open"
+alias cp="cp -v"
+alias lsblk="lsblk -o 'NAME,SIZE,FSAVAIL,FSUSED,FSUSE%,MOUNTPOINTS'"
+alias art="php artisan"
+alias rm="rm -v"
+alias mv="mv -v"
+alias pgrep="pgrep -a"
+alias grep="grep --color=auto"
+alias ncdu="ncdu --color dark"
+alias ll="lsd --color=auto -alh"
+alias ls="lsd --color=auto"
+alias fetch='/bin/*fetch'
+alias nchh="nvim ~/.config/hypr/hyprland.conf"
+alias shfmt="shfmt -ci -d -w"
+
+HISTFILE=~/.histfile
+HISTSIZE=500
+SAVEHIST=500
+clshist
+PROMPT_EOL_MARK=' ⏎ '
+setopt autocd
+bindkey -e
+zstyle :compinstall filename "$0"
+fpath=($HOME/.config/zsh/completions $fpath)
+autoload -Uz compinit
+compinit
+zstyle ':completion:*' menu select
+eval "$(starship init zsh)"
+[ -f "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.config/fzf-tab/fzf-tab.plugin.zsh
