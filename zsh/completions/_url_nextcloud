@@ -1,0 +1,2 @@
+#compdef url_nextcloud
+_arguments '1:filename:_files'
