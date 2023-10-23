@@ -21,7 +21,7 @@ case $1 in
 		;;
 	lyrics)
 		if [ -f "/tmp/yt-music/lyrics" ]; then
-			awk -F'\t' -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - /tmp/yt-music/yt-music-mpvsocket | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1005 {print $2;exit}' /tmp/yt-music/lyrics
+			awk -F'\t' -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - /tmp/yt-music/yt-music-mpvsocket | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1000 {print $2;exit}' /tmp/yt-music/lyrics
 		else
 			printf "Lyrics will show here"
 		fi

@@ -18,7 +18,6 @@ gtp() {
 
 megamind() {
 	len=$(printf '%s' "$*" | wc -c)
-
 	printf "———————————%s———————————
 ⠀⣞⢽⢪⢣⢣⢣⢫⡺⡵⣝⡮⣗⢷⢽⢽⢽⣮⡷⡽⣜⣜⢮⢺⣜⢷⢽⢝⡽⣝
 ⠸⡸⠜⠕⠕⠁⢁⢇⢏⢽⢺⣪⡳⡝⣎⣏⢯⢞⡿⣟⣷⣳⢯⡷⣽⢽⢯⣳⣫⠇
@@ -70,12 +69,12 @@ url_oshi() {
 
 url_nextcloud() {
 	[ ! -f "$HOME/.secrets" ] && notify-send "Credentials not found" -u critical && return 1
-	source "$HOME"/.secrets
-	curl "$NC_HOST/remote.php/dav/files/${NC_USER}${NC_FOLDER_PATH}/$(basename "$1")" -H "Authorization: Basic $NC_AUTH" -T "$1"
+	source "$HOME"/.secrets && load_nextcloud_creds
+	curl "$NC_HOST/remote.php/dav/files/${NC_USER}${NC_FOLDER_PATH}/$(basename "$1")" -b "$NC_COOKIES" -H "Requesttoken: $NC_TOKEN" -T "$1" || return 1
 
 	#To enable sharing, the output will be in json containing share link
-	curl -s -H "Authorization: Basic $NC_AUTH" "$NC_HOST/ocs/v2.php/apps/files_sharing/api/v1/shares" -H 'content-type: application/json' -H 'accept: application/json, text/plain, */*' -H 'OCS-APIRequest: true' --data-raw "{\"path\":\"${NC_FOLDER_PATH}/$(basename "$1")\",\"shareType\":3,\"attributes\":\"[]\"}" | sed -nE 's|.*"url":"([^"]*)".*|\1|p' | sed 's/\\//g' | wl-copy && notify-send "Link copied to clipboard"
-	unset NC_HOST NC_USER NC_FOLDER_PATH NC_AUTH
+	curl -s -b "$NC_COOKIES" -H "Requesttoken: $NC_TOKEN" "$NC_HOST/ocs/v2.php/apps/files_sharing/api/v1/shares" -H 'content-type: application/json' -H 'accept: application/json, text/plain, */*' -H 'OCS-APIRequest: true' --data-raw "{\"path\":\"${NC_FOLDER_PATH}/$(basename "$1")\",\"shareType\":3,\"attributes\":\"[]\"}" | sed -nE 's|.*"url":"([^"]*)".*|\1|p' | sed 's/\\//g' | wl-copy && notify-send "Link copied to clipboard"
+	unset NC_HOST NC_USER NC_FOLDER_PATH NC_TOKEN NC_COOKIES NC_FOLDER_ID
 }
 
 gtd() {
@@ -121,6 +120,7 @@ rmpkg() {
 
 # Lines configured by zsh-newuser-install
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export TZ="Asia/Kolkata"
 alias cat="bat -pp --color=always"
 alias open="xdg-open"
 alias cp="cp -v"

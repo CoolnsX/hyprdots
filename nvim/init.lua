@@ -70,7 +70,7 @@ if not configs.intelephense then
     default_config = {
       cmd = { 'intelephense', '--stdio' };
       filetypes = { 'php' };
-      root_dir = function (fname)
+      root_dir = function ()
 	      return vim.loop.cwd();
       end;
       settings = {
@@ -85,19 +85,19 @@ if not configs.intelephense then
 end
 
 -- for arduino lsp server
-local MY_FQBN = "esp8266:esp8266:nodemcu"
-lspconfig.arduino_language_server.setup {
-    cmd = {
-        "arduino-language-server",
-        "-cli-config", "$HOME/.arduino15/arduino-cli.yaml",
-        "-fqbn",
-        MY_FQBN
-    }
-}
+--local MY_FQBN = "esp8266:esp8266:nodemcu"
+--lspconfig.arduino_language_server.setup {
+--    cmd = {
+--        "arduino-language-server",
+--        "-cli-config", "$HOME/.arduino15/arduino-cli.yaml",
+--        "-fqbn",
+--        MY_FQBN
+--    }
+--}
 
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'bashls', 'pyright', 'lua_ls', 'clangd','intelephense','phpactor' , 'html' ,'cssls'}
+local servers = { 'bashls', 'pyright', 'lua_ls', 'intelephense','phpactor' , 'html' ,'cssls'}
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
 	  capabilities = capabilities,
