@@ -5,7 +5,7 @@
                                :y "50px"
                                :width "25%"
                                :height "200px"
-                               :anchor "top right")
+                               :anchor "bottom right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"
@@ -18,14 +18,14 @@
                                :y "50px"
                                :width "25%"
                                :height "200px"
-                               :anchor "top right")
+                               :anchor "bottom right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"
            :wm-ignore false
      (clock))
 
-(defpoll CLOCK :interval "4s" "date +'{\"hour\": \"%I\" ,\"min\": \"%M\" ,\"mer\" : \"%p\",\"day\" : \"%A\" }'")
+(defpoll CLOCK :interval "4s" "date +'{\"hour\":\"%I\",\"min\":\"%M\",\"mer\":\"%p\",\"day\":\"%A\"}'")
 
 (defwidget clock [] 
       (box :class "genwin" :orientation "h" :spacing 50 :space-evenly false :vexpand "false" :hexpand "false" 
