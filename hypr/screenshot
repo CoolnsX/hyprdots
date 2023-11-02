@@ -1,6 +1,6 @@
 #!/bin/sh
 
-icon="/usr/share/icons/Papirus/16x16/apps/applets-screenshooter.svg" 
+icon="/usr/share/icons/Papirus/16x16/apps/applets-screenshooter.svg"
 killall grim slurp
 [ "$*" = "fullclip" ] && grim - | wl-copy -t image/png && notify-send -i "$icon" "Screenshot copied to clipboard"
 [ "$*" = "fullsave" ] && grim && notify-send -i "$icon" "Screenshot saved"

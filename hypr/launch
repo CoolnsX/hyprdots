@@ -1,7 +1,7 @@
 #!/bin/sh
 
 menu() {
-	bemenu --fn 'IBM Plex Sans 15' -i -c -W "0.${2:-5}" -B 3 -p "$1" -l 25 -P ">>" 
+	bemenu --fn 'IBM Plex Sans 15' -i -c -W "0.${2:-5}" -B 3 -p "$1" -l 25 -P ">>"
 }
 
 [ -z "$1" ] && dir="$HOME/repos_scripts" || dir="$1"

@@ -1,16 +1,16 @@
 #!/bin/sh
 
 i=1
-while [ $i -le 5 ];do
-    mem=$(sed -nE 's_.*MemAvailable:[[:space:]]*(.*) kB_\1_p' /proc/meminfo)
-    mem="$(((7919488 - mem)/1000))"
-    temp=$(cat /sys/class/thermal/thermal_zone0/temp)
-    temp=$((temp / 1000))
-    bat_stats=$(cat /sys/class/power_supply/BAT*/status)
-    vol_stats=$(pamixer --get-mute)
-    [ "$bat_stats" = "Discharging" ] && bat_icon=🔋 || bat_icon=🔌
-    [ "$vol_stats" = "true" ] && vol_icon=🔇 || vol_icon=🔊
-    notify-send -i "lol" "<----------(STATS)---------->" "🧠 CPU usage : $(top -ibn1 | sed -nE 's_%Cpu\(s\):(.*)us.*_\1_p' | cut -d' ' -f2-3) %\n🌡️ Cpu Temp : $temp °C\n🔳 RAM : $mem MB / 7733 MB\n$bat_icon Battery : $(cat /sys/class/power_supply/BAT*/capacity) (${bat_stats})\n☀️ Brightness : $(light -G | cut -d'.' -f1)%\n$vol_icon Volume : $(pamixer --get-volume-human)\n🎵 $(pgrep -af mpvsocket >/dev/null && cut -d ">" -f1 /tmp/yt-music/current | cut -d":" -f2)" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500 &
-    : $((i+=1))
-    sleep 1
+while [ $i -le 5 ]; do
+	mem=$(sed -nE 's_.*MemAvailable:[[:space:]]*(.*) kB_\1_p' /proc/meminfo)
+	mem="$(((7919488 - mem) / 1000))"
+	temp=$(cat /sys/class/thermal/thermal_zone0/temp)
+	temp=$((temp / 1000))
+	bat_stats=$(cat /sys/class/power_supply/BAT*/status)
+	vol_stats=$(pamixer --get-mute)
+	[ "$bat_stats" = "Discharging" ] && bat_icon=🔋 || bat_icon=🔌
+	[ "$vol_stats" = "true" ] && vol_icon=🔇 || vol_icon=🔊
+	notify-send -i "lol" "<----------(STATS)---------->" "🧠 CPU usage : $(top -ibn1 | sed -nE 's_%Cpu\(s\):(.*)us.*_\1_p' | cut -d' ' -f2-3) %\n🌡️ Cpu Temp : $temp °C\n🔳 RAM : $mem MB / 7733 MB\n$bat_icon Battery : $(cat /sys/class/power_supply/BAT*/capacity) (${bat_stats})\n☀️ Brightness : $(light -G | cut -d'.' -f1)%\n$vol_icon Volume : $(pamixer --get-volume-human)\n🎵 $(pgrep -af mpvsocket >/dev/null && cut -d ">" -f1 /tmp/yt-music/current | cut -d":" -f2)" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500 &
+	: $((i += 1))
+	sleep 1
 done

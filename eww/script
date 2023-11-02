@@ -1,16 +1,17 @@
 #!/bin/sh
 
+datadir="/tmp/yt-music"
 case $1 in
 	songdata)
-		out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - /tmp/yt-music/yt-music-mpvsocket 2>/dev/null)
-		if [ -n "$out" ] && pgrep -f mpvsocket >/dev/null 2>&1;then
-			printf '{"name":"%s","artist":"%s","cover":"/tmp/yt-music/default.jpg","next":"%s","prev":"%s"}' "$(cut -d'>' -f1 < "/tmp/yt-music/current" | cut -d':' -f2- | sed 's|[^-]*$||;s|-$||;s| $||;s|^ ||')" "$(cut -d'>' -f1 < "/tmp/yt-music/current" | sed 's_.* - __;s| $||')" "$(sed -n "/$(cut -d'>' -f2 < /tmp/yt-music/current )/{n;p}" /tmp/yt-music/next | cut -f1)" "$(sed -n "$(cat /tmp/yt-music/counter)p" /tmp/yt-music/next | cut -f1)"
+		if [ -f "$datadir/current" ];then
+			out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - "$datadir/yt-music-mpvsocket" 2>/dev/null)
+			printf '{"name":"%s","artist":"%s","cover":"%s","next":"%s","prev":"%s"}' "$(cut -d'>' -f1 < "$datadir/current" | cut -d':' -f2- | sed 's|[^-]*$||;s|-$||;s| $||;s|^ ||')" "$(cut -d'>' -f1 < "$datadir/current" | sed 's_.* - __;s| $||')" "$datadir/default.jpg" "$(sed -n "/$(cut -d'>' -f2 < "$datadir/current" )/{n;p}" $datadir/next | cut -f1)" "$(sed -n "$(cat $datadir/counter)p" $datadir/next | cut -f1)"
 		else
 			printf '{"name":"OFFLINE","artist":"offline","cover":"%s/.config/eww/music.png"}' "$HOME"
 		fi
 		;;
 	status)
-		out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - /tmp/yt-music/yt-music-mpvsocket 2>/dev/null)
+		out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - "$datadir/yt-music-mpvsocket" 2>/dev/null)
 		if [ -z "$out" ];then
 			printf ""
 		elif printf "%s" "$out" | grep -q "true";then
@@ -20,29 +21,26 @@ case $1 in
 		fi
 		;;
 	lyrics)
-		if [ -f "/tmp/yt-music/lyrics" ]; then
-			awk -F'\t' -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - /tmp/yt-music/yt-music-mpvsocket | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1000 {print $2;exit}' /tmp/yt-music/lyrics
+		if [ -f "$datadir/lyrics" ]; then
+			awk -F'\t' -v value="$(echo '{ "command": ["get_property", "time-pos"] }' | socat - "$datadir/yt-music-mpvsocket" | sed -nE 's|.*data":([^,]*).*|\1|p')" '$1 > value*1000 {print $2;exit}' "$datadir/lyrics"
 		else
 			printf "Lyrics will show here"
 		fi
 		;;
 	time)
-		out=$(echo '{"command" :["get_property" , "percent-pos"]}' | socat - /tmp/yt-music/yt-music-mpvsocket 2>/dev/null | sed -nE 's_.*data":([^,]*).*_\1_p')
+		out=$(echo '{"command" :["get_property" , "percent-pos"]}' | socat - "$datadir/yt-music-mpvsocket" 2>/dev/null | sed -nE 's_.*data":([^,]*).*_\1_p')
 		printf '%s' "${out:-100}"
 		;;
 	play_toggle)
-		echo cycle pause | socat - "/tmp/yt-music/yt-music-mpvsocket"
+		echo cycle pause | socat - "$datadir/yt-music-mpvsocket"
 		;;
 	next)
 		pgrep -f mpvsocket >/dev/null 2>&1 && "$HOME/repos_scripts/yt-music" play_next
 		;;
-	next_song)
-		sed -n "$(cat /tmp/yt-music/counter){n;p}" /tmp/yt-music/next | cut -f1
-		;;
 	prev)
-		pgrep -f mpvsocket >/dev/null 2>&1 && counter=$(cat /tmp/yt-music/counter) && [ "$counter" -gt 0 ] && "$HOME/repos_scripts/yt-music" play "$(sed -n "${counter}p" /tmp/yt-music/next)" && printf "%s" "$((counter-1))" > /tmp/yt-music/counter &
+		pgrep -f mpvsocket >/dev/null 2>&1 && counter=$(cat "$datadir/counter") && [ "$counter" -gt 0 ] && "$HOME/repos_scripts/yt-music" play "$(sed -n "${counter}p" "$datadir/next")" && printf "%s" "$((counter-1))" > "$datadir/counter" &
 		;;
 	seek)
-		echo "{\"command\" :[\"seek\" ,\"$2\",\"relative-percent\"]}" | socat - /tmp/yt-music/yt-music-mpvsocket
+		echo "{\"command\" :[\"seek\" ,\"$2\",\"relative-percent\"]}" | socat - "$datadir/yt-music-mpvsocket"
 		;;
 esac

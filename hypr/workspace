@@ -1,9 +1,9 @@
 #!/bin/sh
 
-setup_dual_monitor(){
-	sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,preferred,auto,1/g" "$HOME/.config/hypr/hyprland.conf"
+setup_dual_monitor() {
+	sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,highrr,auto,1/g" "$HOME/.config/hypr/hyprland.conf"
 	sleep 2
-	if hyprctl monitors | grep -q "HDMI-A-1";then
+	if hyprctl monitors | grep -q "HDMI-A-1"; then
 		notify-send "Setting up dual monitor workflow"
 		hyprctl dispatch moveworkspacetomonitor "1 0"
 		hyprctl dispatch moveworkspacetomonitor "2 0"
@@ -14,12 +14,12 @@ setup_dual_monitor(){
 	fi
 }
 
-handle_it(){
+handle_it() {
 	[ -z "$1" ] || notify-send "$1"
 	choice=$(printf "Mirror\nExtend" | bemenu --fn 'Roboto 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1)
 	[ -z "$choice" ] && return 0
 	notify-send "${choice}ing screen"
-	if [ "$choice" = "Extend" ];then
+	if [ "$choice" = "Extend" ]; then
 		setup_dual_monitor
 	else
 		sed -i "s/monitor=,highrr,auto,1/monitor=,1920x1080,0x0,1,mirror,eDP-1/g" "$HOME/.config/hypr/hyprland.conf"
@@ -29,27 +29,33 @@ handle_it(){
 case $1 in
 	list)
 		#only lists the open applications with their workspace number so u can safely close them
-		for i in $(seq 4);do
+		i=4
+		while [ $i -gt 0 ]; do
 			notify-send -i "lol" "$(hyprctl clients | sed -nE 's_.*class: ([^ ]*).*_\1_p;s_.*workspace: ([^ ]*).*_workspace \1 : _p' | sed 'N;s/\n/ /')" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500
+			: $((i -= 1))
 			sleep 1
-		done ;;
+		done
+		;;
 	focus)
 		#shows the workspace number as notification whenever u switch workspaces and also handles the dual monitor setup on the fly(perfect for laptop users)
-		socat - "UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line;do 
+		socat - "UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do
 			printf "%s" "$line" | grep -q "monitoradded" && handle_it "$line"
 			printf "%s" "$line" | grep -q "monitorremoved" && sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,highrr,auto,1/g" "$HOME/.config/hypr/hyprland.conf" && eww kill && eww open_many time_0 music_0
 			#recent workspace switcher
 			current=$(printf "%s" "$line" | sed -nE 's_^(workspace)>>([^ ]*)_\1 \2_p')
-			if [ -n "$current" ];then
-				cat /tmp/workcurr > /tmp/workprev
-				printf "%s" "$current" > /tmp/workcurr
+			if [ -n "$current" ]; then
+				cat /tmp/workcurr >/tmp/workprev
+				printf "%s" "$current" >/tmp/workcurr
 			fi
-			notify-send -i "lol" "$(printf "%s" "$line" | sed -nE 's_^(workspace)>>([^ ]*)_\1 \2_p')" -h 'string:x-canonical-private-synchronous:monitor' -t 700 2>/dev/null
-		done ;;
+			notify-send -i "lol" "$(printf "%s" "$line" | sed -nE 's_^(workspace)>>([^ ]*)_\1 \2_p')" -h "string:x-canonical-private-synchronous:monitor" -t 700 2>/dev/null
+		done
+		;;
 	toggle)
 		#toggle between mirror and extend setup. this function should be keybinded
-		handle_it ;;
+		handle_it
+		;;
 	*)
 		#to be executed once after booting to setup dual montiors by default if the monitor is connected
-		setup_dual_monitor ;;
+		setup_dual_monitor
+		;;
 esac

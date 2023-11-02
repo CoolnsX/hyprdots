@@ -1,5 +1,5 @@
 #!/bin/bash
-if nmcli radio wifi | grep -q 'enabled' ; then
+if nmcli radio wifi | grep -q 'enabled'; then
 	nmcli radio wifi off
 	wifi_icon="offline"
 else
