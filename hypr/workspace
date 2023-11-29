@@ -31,7 +31,7 @@ case $1 in
 		#only lists the open applications with their workspace number so u can safely close them
 		i=4
 		while [ $i -gt 0 ]; do
-			notify-send -i "lol" "$(hyprctl clients | sed -nE 's_.*class: ([^ ]*).*_\1_p;s_.*workspace: ([^ ]*).*_workspace \1 : _p' | sed 'N;s/\n/ /')" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500
+			notify-send -i "lol" "Running Apps" "$(hyprctl clients | tr '\n' ',' | sed 's|,,|\n|g' | sed -nE 's|.*workspace: ([0-9]).*class: ([^,]*).*xwayland: ([^,]).*|workspace \1: \2 (xway: \3)|p')" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500
 			: $((i -= 1))
 			sleep 1
 		done

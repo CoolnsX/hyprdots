@@ -82,4 +82,4 @@
                         (button :class "btn_play" :onclick "./script play_toggle" STATUS)
                         (button :class "btn_controls" :tooltip "Seek +1%" :onclick "./script seek '1'" "")
                         (button :class "btn_controls" :tooltip "Upcoming : ${song.next}" :onclick "./script next" "󰒭"))
-                  (label :justify "left" :wrap "true" :class "lyrics" :text LYRICS))))
+                  (label :wrap "true" :class "lyrics" :text LYRICS))))

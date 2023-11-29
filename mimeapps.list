@@ -27,7 +27,9 @@ text/x-c=nvim.deskop
 text/x-c++=nvim.deskop
 video/x-matroska=mpv.desktop
 application/json=nvim.desktop;
+video/vnd.radgamettools.bink=mpv.desktop
 
 [Added Associations]
 video/x-matroska=mpv.desktop;
 application/octet-stream=google-chrome.desktop;
+video/vnd.radgamettools.bink=mpv.desktop;
