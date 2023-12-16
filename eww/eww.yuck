@@ -18,7 +18,7 @@
                                :y "50px"
                                :width "25%"
                                :height "200px"
-                               :anchor "bottom right")
+                               :anchor "top right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"
