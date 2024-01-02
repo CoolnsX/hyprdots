@@ -28,8 +28,10 @@ text/x-c++=nvim.deskop
 video/x-matroska=mpv.desktop
 application/json=nvim.desktop;
 video/vnd.radgamettools.bink=mpv.desktop
+x-scheme-handler/mailto=google-chrome.desktop
 
 [Added Associations]
 video/x-matroska=mpv.desktop;
 application/octet-stream=google-chrome.desktop;
 video/vnd.radgamettools.bink=mpv.desktop;
+x-scheme-handler/mailto=google-chrome.desktop;

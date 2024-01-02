@@ -50,6 +50,21 @@ b64() {
 	printf "%s" "$1" | tr "._-" '=/+' | base64 -w 0 $2
 }
 
+mkvcinemas() {
+	local base_url="https://mkvcinemas.foo"
+	local agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+	[ -z "$*" ] && printf "Search> " && read -r query || query="$*"
+	
+	local movie=$(curl -s "$base_url/wp-admin/admin-ajax.php" -X POST -d "s=$query&action=searchwp_live_search&swpengine=default&swpquery=$query" -e "$base_url" -H "X-Requested-With:XMLHttpRequest" -L -A "$agent" | sed -nE 's|.*url\(([^\)]*).*href=".*/([^"]*)/".*|\1\t\2|p' | fzf -0 --preview="img2sixel {1} -w 280" --with-nth 2.. --layout=reverse --height=20 --border --preview-window right:36%:wrap | cut -f2)
+	
+	[ -z "$movie" ] && printf "No Movie Found/Selected." && return 1
+	
+	local url=$(curl -s "$base_url/$movie" -e "$base_url" -LA "$agent" | sed -nE 's|.*"gdlink" title="([^"]*)" href="([^"]*)".*|\2~\1|p' data | fzf -0 -d'~' --with-nth 2.. --layout=reverse --height=20 --border | cut -d'~' -f1)
+	[ -z "$url" ] && printf "No Url Selected" && return 1
+	xdg-open "$url"
+}
+
 url_oshi() {
 	days=${2:-1}
 	out=$(curl -k https://oshi.at -F shorturl=0 -F "f=@$1" -F "expire=$((days * 1440))") #1440 means 1 day duration
@@ -128,7 +143,7 @@ alias lsblk="lsblk -o 'NAME,SIZE,FSAVAIL,FSUSED,FSUSE%,MOUNTPOINTS'"
 alias art="php artisan"
 alias rm="rm -v"
 alias mv="mv -v"
-alias pgrep="pgrep -a"
+alias pgrep="pgrep -af"
 alias grep="grep --color=auto"
 alias ncdu="ncdu --color dark"
 alias ll="lsd --color=auto -alh"
