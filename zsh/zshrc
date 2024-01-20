@@ -148,7 +148,6 @@ alias grep="grep --color=auto"
 alias ncdu="ncdu --color dark"
 alias ll="lsd --color=auto -alh"
 alias ls="lsd --color=auto"
-alias fetch='/bin/*fetch'
 alias nchh="nvim ~/.config/hypr/hyprland.conf"
 alias shfmt="shfmt -ci -d -w"
 
@@ -165,5 +164,6 @@ autoload -Uz compinit
 compinit
 zstyle ':completion:*' menu select
 eval "$(starship init zsh)"
+#plugins
 [ -f "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $HOME/.config/fzf-tab/fzf-tab.plugin.zsh
+[ -f "/usr/share/zsh/plugins/fzf-tab-git/fzf-tab.zsh" ] && source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.zsh
