@@ -80,7 +80,7 @@
     # Padding between text and separator.
     padding = 8
 
-    highlight = "#D81860"
+    highlight = "#00D8CE"
 
     # Horizontal padding.
     horizontal_padding = 8
@@ -93,7 +93,7 @@
     frame_width = 3
 
     # Defines color of the frame around the notification window.
-    frame_color = "#D81860"
+    frame_color = "#00D8CE"
 
     # Size of gap to display between notifications - requires a compositor.
     # If value is greater than 0, separator_height will be ignored and a border
@@ -229,7 +229,7 @@
     ### Misc/Advanced ###
 
     # dmenu path.
-    dmenu = "/sbin/bemenu -i --fn 'IBM Plex Sans 15' -l 10 -c -W 0.4 -B 3 -p 'dunst:'"
+    dmenu = "/sbin/bemenu -i --fn 'IBM Plex Sans 15' -l 10 -c -W 0.4 -B 3 -p 'dunst:' --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT""
 
     # Browser for opening urls in context menu.
     browser = /usr/bin/xdg-open

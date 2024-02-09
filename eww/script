@@ -5,7 +5,7 @@ case $1 in
 	songdata)
 		if [ -f "$datadir/current" ];then
 			out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - "$datadir/yt-music-mpvsocket" 2>/dev/null)
-			printf '{"name":"%s","artist":"%s","cover":"%s","next":"%s","prev":"%s"}' "$(cut -d'>' -f1 < "$datadir/current" | cut -d':' -f2- | sed 's|[^-]*$||;s|-$||;s| $||;s|^ ||')" "$(cut -d'>' -f1 < "$datadir/current" | sed 's_.* - __;s| $||')" "$datadir/default.jpg" "$(sed -n "/$(cut -d'>' -f2 < "$datadir/current" )/{n;p}" $datadir/next | cut -f1)" "$(sed -n "$(cat $datadir/counter)p" $datadir/next | cut -f1)"
+			printf '{"name":"%s","artist":"%s","cover":"%s","next":"%s","prev":"%s"}' "$(cut -d'>' -f1 < "$datadir/current" | cut -d':' -f2- | sed 's|[^-]*$||g;s|-$||g;s| $||g;s|^ ||g')" "$(cut -d'>' -f1 < "$datadir/current" | sed 's_.* - __;s| $||')" "$datadir/default.jpg" "$(sed -n "/$(cut -d'>' -f2 < "$datadir/current" )/{n;p}" $datadir/next | cut -f1)" "$(sed -n "$(cat $datadir/counter)p" $datadir/next | cut -f1)"
 		else
 			printf '{"name":"OFFLINE","artist":"offline","cover":"%s/.config/eww/music.png"}' "$HOME"
 		fi

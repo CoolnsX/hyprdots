@@ -7,6 +7,10 @@ data="$(wl-paste -p | tr '\n' '\`' | sed 's/$/ /g')"
 file="$HOME/.cache/bookmarks"
 oshi_file="$HOME/.cache/oshi-urls"
 
+menu(){
+	bemenu --fn 'Roboto 15' -i -c -W 0.6 -B 3 -l 30 -p "$1" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT"
+}
+
 case $1 in
 	add)
 		if [ -z "$data" ]; then
@@ -21,14 +25,14 @@ case $1 in
 	rm)
 		data="$(sed '/^$/d' "$file" | nl -n'ln')"
 		[ -z "$data" ] && notify-send "Bookmark is empty" && exit 0
-		del=$(printf "%s" "$data" | bemenu --fn 'Roboto 15' -i -c -W 0.6 -B 3 -l 30 -p "delete-bookmark :" | cut -f1)
+		del=$(printf "%s" "$data" | menu "delete-bookmark :"  | cut -f1)
 		[ -z "$del" ] || (sed -i "${del}d" "$file" && notify-send -i "bookmark-missing" "Bookmark deleted" -u critical)
 		;;
 	copy)
-		sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | bemenu --fn 'Roboto 15' -i -c -W 0.6 -B 3 -l 30 -p "Put-bookmark :" | tr '\`' '\n' | wl-copy && notify-send "Copied to clipboard" -i "com.github.davidmhewitt.clipped"
+		sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "COPY-bookmark :" | tr '\`' '\n' | wl-copy && notify-send "Copied to clipboard" -i "com.github.davidmhewitt.clipped"
 		;;
 	*)
-		result="$(sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | bemenu --fn 'Roboto 15' -i -c -W 0.6 -B 3 -l 30 -p "Put-bookmark :" | tr '\`' '\n')"
+		result="$(sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "Put-bookmark :" | tr '\`' '\n')"
 		if printf '%s' "$result" | grep -q 'B>'; then
 			google-chrome-stable "$(printf '%s' "$result" | cut -d'>' -f2- | tr -d '\n ')"
 		else

@@ -76,7 +76,7 @@
             (box :orientation "v" :spacing 20 :space-evenly "false" :vexpand "false" :hexpand "false" 
                   (label :tooltip "${song.name}" :halign "center" :class "song" :wrap "false" :limit-width 20 :text "${song.name}")
                   (label :halign "center" :class "artist" :wrap "false" :limit-width 20 :text "${song.artist}")
-                  (box :orientation "h" :spacing 35 :halign "center" :space-evenly "true" :vexpand "false" :hexpand "false" 
+                  (box :orientation "h" :spacing 80 :halign "center" :space-evenly "true" :vexpand "false" :hexpand "false" 
                         (button :class "btn_controls" :tooltip "History : ${song.prev}" :onclick "./script prev" "󰒮")
                         (button :class "btn_controls" :tooltip "Seek -1%" :onclick "./script seek '-1'" "")
                         (button :class "btn_play" :onclick "./script play_toggle" STATUS)

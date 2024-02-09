@@ -304,7 +304,7 @@ original_args=("$@")
 # dmenu command to pipe into. Extra arguments to dmenu-bluetooth are passed through to dmenu. This
 # allows the user to set fonts, sizes, colours, etc.
 run_dmenu() {
-	bemenu "${original_args[@]}" --fn 'Roboto 16' -i -l 10 -c -W 0.4 -B 3 -p "$1"
+	bemenu "${original_args[@]}" --fn 'Roboto 16' -i -l 10 -c -W 0.4 -B 3 -p "$1" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT"
 }
 
 case "$1" in

@@ -16,7 +16,7 @@ setup_dual_monitor() {
 
 handle_it() {
 	[ -z "$1" ] || notify-send "$1"
-	choice=$(printf "Mirror\nExtend" | bemenu --fn 'Roboto 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1)
+	choice=$(printf "Mirror\nExtend" | bemenu --fn 'Roboto 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1 --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
 	[ -z "$choice" ] && return 0
 	notify-send "${choice}ing screen"
 	if [ "$choice" = "Extend" ]; then
