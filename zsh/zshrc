@@ -126,7 +126,7 @@ help() {
 
 addpkg() {
 	[ -z "$*" ] && printf "\033[1;31mPlease write the name of package (just some words)..\033[0m" && return 1
-	paru -Ss "$*" | sed -nE 's|^([a-z]*)/([^ ]*).*|[\1] \2|p' | fzf --layout=reverse --border --preview 'paru -Si $(echo {} | cut -d" " -f2) | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap -m | cut -d' ' -f2- | paru -S -
+	paru -Ss "$*" | sed -nE 's|^([a-z]*)/([^ ]*).*|[\1] \2|p' | fzf --layout=reverse --border -1 --preview 'paru -Si $(echo {} | cut -d" " -f2) | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap -m | cut -d' ' -f2- | paru -S -
 }
 
 rmpkg() {
