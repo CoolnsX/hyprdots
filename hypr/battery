@@ -1,0 +1,20 @@
+#!/bin/sh
+
+i=10
+dir="/sys/class/power_supply/BAT0/"
+icon_dir="/usr/share/icons/Papirus/22x22/panel/"
+
+[ -n "$1" ] && printf "Sleep for %s seconds\n" "$i"
+
+while sleep $i; do
+	capacity_level=$(cat "$dir"/capacity_level)
+	state=$(cat "$dir"/status)
+	case $capacity_level in
+		*ritical) i=10 ;;
+		*ow) i=60 ;;
+		*) i=300 ;;
+	esac
+	[ -n "$1" ] && printf "Sleep for %s seconds\n" "$i"
+	[ "$state" = "Discharging" ] || continue
+	[ "$capacity_level" != "Normal" ] && notify-send -i "$icon_dir/battery-010.svg" -h "string:x-canonical-private-synchronous:${0##*/}" "$(cat "$dir/capacity") Battery $capacity_level, Please Plugin Charger!!" -u "$capacity_level" 
+done

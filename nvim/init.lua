@@ -97,7 +97,7 @@ end
 
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'bashls', 'pyright', 'lua_ls', 'intelephense','phpactor' , 'html' ,'cssls'}
+local servers = { 'bashls', 'pyright', 'lua_ls', 'html' ,'cssls'}
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
 	  capabilities = capabilities,
