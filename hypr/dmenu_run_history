@@ -4,10 +4,10 @@ cachedir=${XDG_CACHE_HOME:-"$HOME/.cache"}
 cache=$cachedir/dmenu_run
 historyfile=$cachedir/dmenu_history
 
-ls /bin > "$cache"
+ls /bin >"$cache"
 
-cut -f2 "$historyfile" "$cache" | bemenu --fixed-height --fn 'JetBrainsMono Nerd Font 15' -i -c -W 0.5 -B 3 -p "RUN: " -l 15 -P ">>" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT" \
-	| awk -v histfile=$historyfile '
+cut -f2 "$historyfile" "$cache" | bemenu --fixed-height --fn 'JetBrainsMono Nerd Font 15' -i -c -W 0.5 -B 3 -p "RUN: " -l 15 -P ">>" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT" |
+	awk -v histfile=$historyfile '
 		BEGIN {
 			FS=OFS="\t"
 			while ( (getline < histfile) > 0 ) {
@@ -29,5 +29,5 @@ cut -f2 "$historyfile" "$cache" | bemenu --fixed-height --fn 'JetBrainsMono Nerd
 			for (f in history)
 				print history[f],f | "sort -t '\t' -k1rn >" histfile
 		}
-	' \
-	| while read cmd; do ${SHELL:-"/bin/sh"} -c "$cmd" & done
+	' |
+	while read cmd; do ${SHELL:-"/bin/sh"} -c "$cmd" & done

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+gamedir="$HOME/games"
+
+game=$(find "$gamedir" -maxdepth 2 -type f -name '*.exe' -executable | sed "s|$gamedir/||g;/unin.*/d" | bemenu --fn 'JetBrainsMono Nerd Font 15' -i -c -W 0.5 -B 3 -p "PLAY GAME: " -l 15 -P ">>" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
+
+[ -z "$game" ] && notify-send -h "string:x-canonical-private-synchronous:${0##*/}" -u critical "No game selected" && exit 1
+
+cd "$(dirname "$gamedir"/"$game")" || (notify-send -h "string:x-canonical-private-synchronous:${0##*/}" -u critical "Directory Not found" && exit 1)
+
+gamename=$(basename "$game")
+
+notify-send -h "string:x-canonical-private-synchronous:${0##*/}" -i "wine" "Launching $gamename"
+
+RADV_PERFTEST=gpl DXVK_ASYNC=1 gamemoderun mangohud wine "$gamename"

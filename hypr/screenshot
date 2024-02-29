@@ -3,5 +3,5 @@
 icon="/usr/share/icons/Papirus/16x16/apps/applets-screenshooter.svg"
 killall grim slurp
 [ "$*" = "fullclip" ] && grim - | wl-copy -t image/png && notify-send -i "$icon" "Screenshot copied to clipboard"
-[ "$*" = "fullsave" ] && grim && notify-send -i "$icon" "Screenshot saved"
+[ "$*" = "fullsave" ] && grim "$HOME/Pictures/$(date -u "+%Y-%m-%d_%H-%M-%S").png" && notify-send -i "$icon" "Screenshot saved"
 [ "$*" = "selclip" ] && grim -g "$(slurp)" - | wl-copy -t image/png && notify-send -i "$icon" "Screenshot copied to clipboard"

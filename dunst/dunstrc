@@ -80,7 +80,7 @@
     # Padding between text and separator.
     padding = 8
 
-    highlight = "#5E88DD"
+    highlight = "#D81860"
 
     # Horizontal padding.
     horizontal_padding = 8
@@ -93,7 +93,7 @@
     frame_width = 3
 
     # Defines color of the frame around the notification window.
-    frame_color = "#5E88DD"
+    frame_color = "#D81860"
 
     # Size of gap to display between notifications - requires a compositor.
     # If value is greater than 0, separator_height will be ignored and a border

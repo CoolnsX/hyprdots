@@ -51,7 +51,7 @@ b64() {
 }
 
 mkvcinemas() {
-	local base_url="https://mkvcinemas.zip"
+	local base_url="https://mkvcinemas.rsvp"
 	local agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 	[ -z "$*" ] && printf "Search> " && read -r query || query="$*"
@@ -60,7 +60,7 @@ mkvcinemas() {
 	
 	[ -z "$movie" ] && printf "No Movie Found/Selected." && return 1
 	
-	local url=$(curl -s "$base_url/$movie" -e "$base_url" -LA "$agent" | sed -nE 's|.*"gdlink" title="([^"]*)" href="([^"]*)".*|\2~\1|p' data | fzf -0 -d'~' --with-nth 2.. --layout=reverse --height=20 --border | cut -d'~' -f1)
+	local url=$(curl -s "$base_url/$movie" -e "$base_url" -LA "$agent" |  sed 's|<span>|\n|g' | sed -nE 's|.*title="([^"]*)" href="([^"]*)" target.*[>|;](.*)</a><.*|\2`[\3] \1|p;' | fzf -0 -d'`' --with-nth 2.. --layout=reverse --height=20 --border | cut -d'`' -f1)
 	[ -z "$url" ] && printf "No Url Selected" && return 1
 	xdg-open "$url"
 }

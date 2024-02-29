@@ -43,7 +43,7 @@
                                :y "50"
                                :width "30%"
                                :height "40px"
-                               :anchor "top left")
+                               :anchor "bottom left")
            :stacking "bg"
            :reserve (struts :distance "10px" :side "bottom")
            :windowtype "dock"

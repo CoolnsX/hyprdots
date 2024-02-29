@@ -1,20 +1,47 @@
 #!/bin/sh
 
-i=10
-dir="/sys/class/power_supply/BAT0/"
-icon_dir="/usr/share/icons/Papirus/22x22/panel/"
+remind() {
+	notify-send -i "$icon_dir/battery-010.svg" -h "string:x-canonical-private-synchronous:${0##*/}" "$1 % Battery $2, Please Plugin Charger!!" -u "$2"
+}
 
-[ -n "$1" ] && printf "Sleep for %s seconds\n" "$i"
+print_sleep() {
+	[ -n "$4" ] && printf "Status: %s, Charge: %s,Next Check in %s seconds\n" "$3" "$2" "$1"
+	sleep "$1"
+}
 
-while sleep $i; do
-	capacity_level=$(cat "$dir"/capacity_level)
-	state=$(cat "$dir"/status)
-	case $capacity_level in
-		*ritical) i=10 ;;
-		*ow) i=60 ;;
-		*) i=300 ;;
-	esac
-	[ -n "$1" ] && printf "Sleep for %s seconds\n" "$i"
-	[ "$state" = "Discharging" ] || continue
-	[ "$capacity_level" != "Normal" ] && notify-send -i "$icon_dir/battery-010.svg" -h "string:x-canonical-private-synchronous:${0##*/}" "$(cat "$dir/capacity") Battery $capacity_level, Please Plugin Charger!!" -u "$capacity_level" 
+#declaration
+battery="BAT0" #change accordingly
+dir="/sys/class/power_supply/$battery/"
+icon_dir="/usr/share/icons/Papirus/22x22/panel/" #change accordingly
+i=0
+status="normal"
+
+#infinite loop
+while charge=$(cat "$dir"/capacity); do
+	if [ "$(cat "$dir"/status)" = "Charging" ]; then
+		i=300 #default polling time, it's 5 minutes
+	else
+		case $charge in
+			[2-9][0-9] | 100)
+				i=300 # 5 minutes
+				status="normal"
+				;;
+			[1-2][0-9])
+				i=150 # 2.5 minutes
+				status="low"
+				;;
+			[5-9])
+				i=60 # every minute
+				status="critical"
+				;;
+			[0-4])
+				i=10 # every 10 seconds
+				status="critical"
+				;;
+		esac
+
+		# remind appropriately
+		[ "$status" != "normal" ] && remind "$charge" "$status"
+	fi
+	print_sleep "$i" "$charge" "$status" "$1" #pass 'log' as argument to print logs
 done
