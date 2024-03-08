@@ -1,0 +1,52 @@
+#!/bin/sh
+
+##########################################################################################
+# NOTE: you need to be member of "video" group or maybe "input" group for this to work.. #
+##########################################################################################
+
+########
+# MAIN #
+########
+
+# dir where the backlight component resides..
+root_dir="/sys/class/backlight"
+
+#########################################################################
+# brighness directory can be different per device, check above root_dir #
+#########################################################################
+#for intel
+#backlight_dir="intel_backlight0"
+
+#for acpi (generic)
+#backlight_dir="acpi_backlight0"
+
+#for amd
+backlight_dir="amdgpu_bl1"
+
+#file read
+brightness_file="$root_dir/$backlight_dir/brightness"
+current=$(cat "$brightness_file")
+max=$(cat "$root_dir/$backlight_dir/max_brightness")
+
+#runtime values
+opr=$1 # [+|-], required
+increment=${2:-5} # [ default:5, optional] "around 2% brightness"
+
+#shellcheck disable=SC2004
+[ "$opr" = "s" ] && printf "%s" "$((${current}00/${max}))" && exit 0
+
+#validation
+(! printf '%s' "$opr" | grep -qE '[+-]') && notify-send -u critical "Unknown Operator, use only + or -" && exit 1 
+
+#shellcheck disable=SC2086,SC1102
+new="$(( $current $opr $increment ))"
+
+#constraints
+[ "$new" -ge "$max" ] && new=$max
+[ "$new" -le 0 ] && new=0
+
+#new brightness value
+printf '%s' "$new" > "$brightness_file"
+
+#shellcheck disable=SC2004
+notify-send -i "lol" "☀️  $((${new}00/${max}))" -t 1000 -h "string:x-canonical-private-synchronous:${0##*/}"
