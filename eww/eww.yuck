@@ -43,7 +43,7 @@
                                :y "50"
                                :width "30%"
                                :height "40px"
-                               :anchor "bottom right")
+                               :anchor "bottom left")
            :stacking "bg"
            :reserve (struts :distance "10px" :side "bottom")
            :windowtype "dock"
@@ -64,13 +64,15 @@
      (music))
 
 (defpoll song :interval "2s" "./script songdata")
-(defpoll STATUS :interval "0.4s" "./script status")
-(defpoll CURRENT :interval "0.4s" "./script time")
+(defpoll STATUS :interval "0.3s" "./script status")
+(defpoll CURRENT :interval "0.3s" "./script time")
 (defpoll LYRICS :interval "0.4s" "./script lyrics")
 
 (defwidget music []
       (box :class "genwin" :orientation "h" :spacing 50 :space-evenly "false" :vexpand "false" :hexpand "false" 
-            
+            (box :class "box_art" :vexpand "false" :hexpand "false"
+                  (circular-progress :class "music_bar" :value CURRENT :thickness 10 :clockwise true :start-at "${(CURRENT+75)%100}"
+                        (image :path "${song.cover}" :image-height 270 :image-width 270)))
             (box :orientation "v" :spacing 20 :space-evenly "false" :vexpand "false" :hexpand "false" 
                   (label :tooltip "${song.name}" :halign "center" :class "song" :wrap "false" :limit-width 32 :text "${song.name}")
                   (label :halign "center" :class "artist" :wrap "false" :limit-width 20 :text "${song.artist}")
@@ -80,7 +82,5 @@
                         (button :class "btn_play" :onclick "./script play_toggle" STATUS)
                         (button :class "btn_controls" :tooltip "Seek +1%" :onclick "./script seek '1'" "")
                         (button :class "btn_controls" :tooltip "Upcoming : ${song.next}" :onclick "./script next" "󰒭"))
-                  (label :wrap "true" :class "lyrics" :text LYRICS))
-           (box :class "box_art" :vexpand "false" :hexpand "false"
-                  (circular-progress :class "music_bar" :value CURRENT :thickness 10 :clockwise true :start-at "${(CURRENT+75)%100}"
-                        (image :path "${song.cover}" :image-height 270 :image-width 270)))))
+                  (label :wrap "true" :class "lyrics" :text LYRICS))))
+           

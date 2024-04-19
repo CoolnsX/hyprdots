@@ -11,10 +11,10 @@ min_time = 70
 format = " took [$duration]($style)"
 
 [directory]
-format = "[$path]($style)[$lock_symbol]($lock_style)"
+format = "[$path]($style)[$lock_symbol]($lock_style) "
 
 [git_branch]
-format = " on [$symbol$branch]($style) "
+format = "on [$symbol$branch]($style) "
 symbol = "🍣 "
 style = "bold yellow"
 
@@ -26,7 +26,7 @@ style = "bold white"
 format = '[\($state( $progress_current of $progress_total)\)]($style) '
 
 [git_status]
-conflicted = "⚔️ "
+conflicted = "⚔️  "
 ahead = "🏎️ 💨 ×${count} "
 behind = "🐢×${count} "
 diverged = "🔱 {ahead} {behind}"
@@ -37,7 +37,7 @@ staged = "🗃️ ×${count} "
 renamed = "📛×${count} "
 deleted = "🗑️ ×${count} "
 style = "brightwhite"
-format = "$all_status$ahead_behind"
+format = "$all_status $ahead_behind "
 
 [hostname]
 ssh_only = true
@@ -50,15 +50,15 @@ disabled = true
 disabled = true
 
 [python]
-format = " [$symbol$version]($style) "
+format = "[$symbol$version]($style) "
 style = "bold green"
 
 [rust]
-format = " [$symbol$version]($style) "
+format = "[$symbol$version]($style) "
 style = "bold green"
 
 [golang]
-format = " [$symbol$version]($style) "
+format = "[$symbol$version]($style) "
 style = "bold green"
 
 [username]
