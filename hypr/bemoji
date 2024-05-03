@@ -5,7 +5,7 @@ menu() {
 }
 
 notify() {
-	notify-send "$1" -h "string:x-canonical-private-synchronous:${0##*/}" -i "$2" -u "${3:-normal}"
+	notify-send -e "$1" -h "string:x-canonical-private-synchronous:${0##*/}" -i "$2" -u "${3:-normal}"
 }
 
 download_emoji_file(){

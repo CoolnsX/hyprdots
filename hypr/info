@@ -14,6 +14,6 @@ top -ibn5 -d1 | while read -r line;do
 		charge=$(cat /sys/class/power_supply/BAT0/capacity)
 		[ "$bat_stats" = "Discharging" ] && { [ "$charge" -lt 20 ] && bat_icon=🪫 || bat_icon=🔋 ;} || bat_icon=🔌
 		[ "$vol_stats" = "muted" ] && vol_icon=🔇 || vol_icon=🔊
-		notify-send -i "lol" "<----------(STATS)---------->" "🧠 CPU usage : $cpu\n🌡️ Cpu Temp : $temp °C\n🔳 RAM : $mem\n$bat_icon Battery : $charge (${bat_stats})\n☀️ Brightness : $("$(dirname "$0")"/brightness s)%\n$vol_icon Volume : $vol_stats\n🎵 $(cut -d ">" -f1 /tmp/yt-music/current 2>/dev/null | cut -d":" -f2)" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500 &
+		notify-send -e -i "lol" "<----------(STATS)---------->" "🧠 CPU usage : $cpu\n🌡️ Cpu Temp : $temp °C\n🔳 RAM : $mem\n$bat_icon Battery : $charge (${bat_stats})\n☀️ Brightness : $("$(dirname "$0")"/brightness s)%\n$vol_icon Volume : $vol_stats\n🎵 $(cut -d ">" -f1 /tmp/yt-music/current 2>/dev/null | cut -d":" -f2)" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500 &
 	fi
 done

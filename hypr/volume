@@ -6,4 +6,4 @@ vol_icon="low"
 [ "$vol_int" -gt 33 ] && vol_icon="medium"
 [ "$vol_int" -gt 66 ] && vol_icon="high"
 pamixer --get-mute | sh && vol_icon="muted"
-notify-send -i "/usr/share/icons/Papirus/16x16/panel/audio-volume-$vol_icon.svg" "$vol_int %" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1000
+notify-send -e -i "/usr/share/icons/Papirus/16x16/panel/audio-volume-$vol_icon.svg" "$vol_int %" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1000

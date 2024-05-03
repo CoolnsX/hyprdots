@@ -4,7 +4,7 @@ setup_dual_monitor() {
 	sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,highrr,auto,1/g" "$HOME/.config/hypr/hyprland.conf"
 	sleep 2
 	if hyprctl monitors | grep -q "HDMI-A-1"; then
-		notify-send "Setting up dual monitor workflow"
+		notify-send -e "Setting up dual monitor workflow"
 		hyprctl dispatch moveworkspacetomonitor "1 0"
 		hyprctl dispatch moveworkspacetomonitor "2 0"
 		hyprctl dispatch moveworkspacetomonitor "3 0"
@@ -15,10 +15,10 @@ setup_dual_monitor() {
 }
 
 handle_it() {
-	[ -z "$1" ] || notify-send "$1"
+	[ -z "$1" ] || notify-send -e "$1"
 	choice=$(printf "Mirror\nExtend" | bemenu --fn 'Roboto 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1 --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
 	[ -z "$choice" ] && return 0
-	notify-send "${choice}ing screen"
+	notify-send -e "${choice}ing screen"
 	if [ "$choice" = "Extend" ]; then
 		setup_dual_monitor
 	else
@@ -31,7 +31,7 @@ case $1 in
 		#only lists the open applications with their workspace number so u can safely close them
 		i=4
 		while [ $i -gt 0 ]; do
-			notify-send -i "lol" "Running Apps" "$(hyprctl clients | tr '\n' ',' | sed 's|,,|\n|g' | sed -nE 's|.*workspace: ([0-9]).*class: ([^,]*).*xwayland: ([^,]).*|workspace \1: \2 (xway: \3)|p')" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500
+			notify-send -e -i "lol" "Running Apps" "$(hyprctl clients | tr '\n' ',' | sed 's|,,|\n|g' | sed -nE 's|.*workspace: ([0-9]).*class: ([^,]*).*xwayland: ([^,]).*|workspace \1: \2 (xway: \3)|p')" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500
 			: $((i -= 1))
 			sleep 1
 		done
@@ -47,7 +47,7 @@ case $1 in
 				cat /tmp/workcurr >/tmp/workprev
 				printf "%s" "$current" >/tmp/workcurr
 			fi
-			notify-send -i "lol" "$(printf "%s" "$line" | sed -nE 's_^(workspace)>>([^ ]*)_\1 \2_p')" -h "string:x-canonical-private-synchronous:monitor" -t 700 2>/dev/null
+			notify-send -e -i "lol" "$(printf "%s" "$line" | sed -nE 's_^(workspace)>>([^ ]*)_\1 \2_p')" -h "string:x-canonical-private-synchronous:monitor" -t 700 2>/dev/null
 		done
 		;;
 	toggle)

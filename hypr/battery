@@ -1,7 +1,7 @@
 #!/bin/sh
 
 remind() {
-	notify-send -i "$icon_dir/battery-010.svg" -h "string:x-canonical-private-synchronous:${0##*/}" "$1 % Battery $2, Please Plugin Charger!!" -u "$2"
+	notify-send -e -i "$icon_dir/battery-010.svg" -h "string:x-canonical-private-synchronous:${0##*/}" "$1 % Battery $2, Please Plugin Charger!!" -u "$2"
 }
 
 print_sleep() {

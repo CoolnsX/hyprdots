@@ -14,22 +14,22 @@ menu() {
 case $1 in
 	add)
 		if [ -z "$data" ]; then
-			notify-send "Please select anything to bookmark"
+			notify-send -e "Please select anything to bookmark"
 		elif grep -q "${data}" "$file"; then
-			notify-send -i "bookmark-missing" "Already bookmarked"
+			notify-send -e -i "bookmark-missing" "Already bookmarked"
 		else
 			printf "%s" "$data" >>"$file"
-			notify-send -i "user-bookmarks" "Bookmarked" "$data"
+			notify-send -e -i "user-bookmarks" "Bookmarked" "$data"
 		fi
 		;;
 	rm)
 		data="$(sed '/^$/d' "$file" | nl -n'ln')"
-		[ -z "$data" ] && notify-send "Bookmark is empty" && exit 0
+		[ -z "$data" ] && notify-send -e "Bookmark is empty" && exit 0
 		del=$(printf "%s" "$data" | menu "delete-bookmark :" | cut -f1)
-		[ -z "$del" ] || (sed -i "${del}d" "$file" && notify-send -i "bookmark-missing" "Bookmark deleted" -u critical)
+		[ -z "$del" ] || (sed -i "${del}d" "$file" && notify-send -e -i "bookmark-missing" "Bookmark deleted" -u critical)
 		;;
 	copy)
-		sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "COPY-bookmark :" | tr '\`' '\n' | wl-copy && notify-send "Copied to clipboard" -i "com.github.davidmhewitt.clipped"
+		sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "COPY-bookmark :" | tr '\`' '\n' | wl-copy && notify-send -e "Copied to clipboard" -i "com.github.davidmhewitt.clipped"
 		;;
 	*)
 		result="$(sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "Put-bookmark :" | tr '\`' '\n')"

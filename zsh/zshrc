@@ -50,6 +50,21 @@ b64() {
 	printf "%s" "$1" | tr "._-" '=/+' | base64 -w 0 $2
 }
 
+mpv_jellyfin() {
+	url=${1:-$(wl-paste)}
+	uuid=$(printf '%s' "$url" | sed -nE 's|.*/Items/([^/]*)/Download.*|\1|p')
+	key=$(printf '%s' "$url" | sed -nE 's|.*api_key=([^&]*)|\1|p')
+	formatted_uuid=$(printf '%s' "$uuid" | sed -E 's/(.{8})(.{4})(.{4})(.{4})(.{12})/\1-\2-\3-\4-\5/')
+	subtitle="$(printf '%s' "$url" | sed -nE 's|(.*)/Items/.*|\1|p')/Videos/$formatted_uuid/$uuid/Subtitles/0/0/Stream.ass?api_key=$key"
+
+	if ! curl -s "$subtitle" | grep -q "Error processing request.";then
+		sub_arg="--sub-file=$subtitle"
+	fi
+
+	setsid -f mpv "$url" $sub_arg
+	unset subtitle sub_arg uuid formatted_uuid key
+}
+
 mkvcinemas() {
 	local base_url="https://mkvcinemas.tokyo"
 	local agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -150,6 +165,7 @@ alias ll="lsd --color=auto -alh"
 alias ls="lsd --color=auto"
 alias nchh="nvim ~/.config/hypr/hyprland.conf"
 alias shfmt="shfmt -ci -d -w"
+alias reboot_firmware="systemctl reboot --firmware-setup"
 
 HISTFILE=~/.histfile
 HISTSIZE=500

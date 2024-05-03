@@ -36,7 +36,7 @@ increment=${2:-5} # [ default:5, optional] "around 2% brightness"
 [ "$opr" = "s" ] && printf "%s" "$((${current}00/${max}))" && exit 0
 
 #validation
-(! printf '%s' "$opr" | grep -qE '[+-]') && notify-send -u critical "Unknown Operator, use only + or -" && exit 1 
+(! printf '%s' "$opr" | grep -qE '[+-]') && notify-send -e -u critical "Unknown Operator, use only + or -" && exit 1 
 
 #shellcheck disable=SC2086,SC1102
 new="$(( $current $opr $increment ))"
@@ -49,4 +49,4 @@ new="$(( $current $opr $increment ))"
 printf '%s' "$new" > "$brightness_file"
 
 #shellcheck disable=SC2004
-notify-send -i "lol" "☀️  $((${new}00/${max}))" -t 1000 -h "string:x-canonical-private-synchronous:${0##*/}"
+notify-send -e -i "lol" "☀️  $((${new}00/${max}))" -t 1000 -h "string:x-canonical-private-synchronous:${0##*/}"

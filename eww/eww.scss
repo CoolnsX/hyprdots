@@ -55,9 +55,17 @@
 .btn_play:hover {
 	color: #A2A852;
 }
-.btn_controls {
+.btn_controls_seek {
 	color: #EBCB8B;
 	font-size : 26px;
+	font-family: IosevkaTerm Nerd Font;
+}
+.btn_controls_seek:hover {
+	font-size : 35px;
+}
+.btn_controls {
+	color: #EBCB8B;
+	font-size : 40px;
 	font-family: IosevkaTerm Nerd Font;
 }
 .btn_controls:hover {
