@@ -29,7 +29,9 @@ case $1 in
 		[ -z "$del" ] || (sed -i "${del}d" "$file" && notify-send -e -i "bookmark-missing" "Bookmark deleted" -u critical)
 		;;
 	copy)
-		sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "COPY-bookmark :" | tr '\`' '\n' | wl-copy && notify-send -e "Copied to clipboard" -i "com.github.davidmhewitt.clipped"
+		data=$(sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "COPY-bookmark :" | tr '\`' '\n')
+		[ -z "$data" ] && notify-send -e -u critical "No Bookmark selected" && exit 1
+		printf '%s' "$data" | wl-copy && notify-send -e "Copied to clipboard" -i "com.github.davidmhewitt.clipped"
 		;;
 	*)
 		result="$(sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "Put-bookmark :" | tr '\`' '\n')"

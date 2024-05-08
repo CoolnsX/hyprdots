@@ -4,8 +4,10 @@ datadir="/tmp/yt-music"
 case $1 in
 	songdata)
 		if [ -f "$datadir/current" ];then
+			# shellcheck source=/tmp/yt-music/current
+			. "$datadir/current"
 			out=$(printf '{ "command": ["get_property", "pause"]}\n' | socat - "$datadir/yt-music-mpvsocket" 2>/dev/null)
-			printf '{"name":"%s","artist":"%s","cover":"%s","next":"%s","prev":"%s"}' "$(cut -d'>' -f1 < "$datadir/current" | cut -d':' -f2- | sed 's|[^-]*$||g;s|-$||g;s| $||g;s|^ ||g')" "$(cut -d'>' -f1 < "$datadir/current" | sed 's_.* - __;s| $||')" "$datadir/default.jpg" "$(sed -n "/$(cut -d'>' -f2 < "$datadir/current" )/{n;p}" $datadir/next | cut -f1)" "$(sed -n "$(cat $datadir/counter)p" $datadir/next | cut -f1)"
+			printf '{"name":"%s","artist":"%s","cover":"%s","next":"%s","prev":"%s"}' "$SONG" "$ARTIST" "$datadir/default.jpg" "$(sed -n "/$ID/{n;p}" $datadir/next | cut -f1)" "$(sed -n "$(cat $datadir/counter)p" $datadir/next 2>/dev/null | cut -f1)"
 		else
 			printf '{"name":"OFFLINE","artist":"offline","cover":"%s/.config/eww/music.png"}' "$HOME"
 		fi
@@ -41,6 +43,6 @@ case $1 in
 		pgrep -f mpvsocket >/dev/null 2>&1 && counter=$(cat "$datadir/counter") && [ "$counter" -gt 0 ] && "$HOME/repos_scripts/yt-music" play "$(sed -n "${counter}p" "$datadir/next")" && printf "%s" "$((counter-1))" > "$datadir/counter" &
 		;;
 	seek)
-		echo "{\"command\" :[\"seek\" ,\"$2\",\"relative-percent\"]}" | socat - "$datadir/yt-music-mpvsocket"
+		echo '{"command" :["seek" ,"'"$2"'","relative-percent"]}' | socat - "$datadir/yt-music-mpvsocket"
 		;;
 esac

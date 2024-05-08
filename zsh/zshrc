@@ -39,6 +39,7 @@ megamind() {
 	printf '\n'
 	unset len
 }
+
 gtb() {
 	[ -z "$*" ] && br=$(git branch -a | fzf --border=rounded --layout=reverse --height=10 | tr -d ' ') || br=$*
 	[ -z "$br" ] || git checkout $br
@@ -148,7 +149,7 @@ rmpkg() {
 	paru -Qq | fzf --preview 'paru -Si {} | bat --language=yaml --color=always -pp' --preview-window right:65%:wrap -m | paru -Rcns -
 }
 
-# Lines configured by zsh-newuser-install
+# Alias and exports
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export TZ="Asia/Kolkata"
 alias cat="bat -pp --color=always"
@@ -167,6 +168,7 @@ alias nchh="nvim ~/.config/hypr/hyprland.conf"
 alias shfmt="shfmt -ci -d -w"
 alias reboot_firmware="systemctl reboot --firmware-setup"
 
+#config
 HISTFILE=~/.histfile
 HISTSIZE=500
 SAVEHIST=500
@@ -180,6 +182,7 @@ autoload -Uz compinit
 compinit
 zstyle ':completion:*' menu select
 eval "$(starship init zsh)"
+
 #plugins
 [ -f "/usr/share/nvm/init-nvm.sh" ] && source /usr/share/nvm/init-nvm.sh
 [ -f "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
