@@ -18,7 +18,7 @@ download_emoji_file(){
 }
 
 
-emoji_file="${XDG_CACHE_DIR:-$HOME/.cache}/emoji"
+emoji_file="${XDG_CACHE_DIR:-$HOME/.cache}/${0##*/}"
 
 # check emoji file
 [ -f "$emoji_file" ] || download_emoji_file "$emoji_file"

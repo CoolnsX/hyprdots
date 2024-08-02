@@ -39,7 +39,7 @@ application/x-extension-xht=google-chrome.desktop
 
 [Added Associations]
 video/x-matroska=mpv.desktop;
-application/octet-stream=google-chrome.desktop;
+application/octet-stream=mpv.desktop;google-chrome.desktop;
 video/vnd.radgamettools.bink=mpv.desktop;
 x-scheme-handler/mailto=google-chrome.desktop;
 x-scheme-handler/http=google-chrome.desktop;
@@ -52,3 +52,7 @@ application/x-extension-shtml=google-chrome.desktop;
 application/xhtml+xml=google-chrome.desktop;
 application/x-extension-xhtml=google-chrome.desktop;
 application/x-extension-xht=google-chrome.desktop;
+application/x-zerosize=nvim.desktop;
+video/mpeg=google-chrome.desktop;
+x-scheme-handler/magnet=torrent.desktop;
+application/x-bittorrent=torrent.desktop;

@@ -2,8 +2,8 @@
 (defwindow time_1
            :monitor 1
            :geometry (geometry :x "50px"
-                               :y "50px"
-                               :width "25%"
+                               :y "20px"
+                               :width "35%"
                                :height "200px"
                                :anchor "bottom right")
            :stacking "bg"
@@ -14,9 +14,9 @@
 
 (defwindow time_0
            :monitor 0
-           :geometry (geometry :x "50px"
-                               :y "50px"
-                               :width "25%"
+           :geometry (geometry :x "30px"
+                               :y "30px"
+                               :width "32%"
                                :height "200px"
                                :anchor "top right")
            :stacking "bg"
@@ -39,8 +39,8 @@
 ;; music
 (defwindow music_0
            :monitor 0
-           :geometry (geometry :x "50"
-                               :y "50"
+           :geometry (geometry :x "30"
+                               :y "25"
                                :width "30%"
                                :height "40px"
                                :anchor "top left")
@@ -56,7 +56,7 @@
                                :y "50"
                                :width "30%"
                                :height "40px"
-                               :anchor "bottom left")
+                               :anchor "top left")
            :stacking "bg"
            :reserve (struts :distance "10px" :side "bottom")
            :windowtype "dock"
@@ -69,12 +69,12 @@
 (defpoll LYRICS :interval "0.4s" "./script lyrics")
 
 (defwidget music []
-      (box :class "genwin" :orientation "h" :spacing 50 :space-evenly "false" :vexpand "false" :hexpand "false" 
+      (box :class "genwin" :orientation "h" :spacing 40 :space-evenly "false" :vexpand "false" :hexpand "false" 
             (box :class "box_art" :vexpand "false" :hexpand "false"
                   (circular-progress :class "music_bar" :value CURRENT :thickness 10 :clockwise true :start-at "${(CURRENT+75)%100}"
                         (image :path "${song.cover}" :image-height 270 :image-width 270)))
             (box :orientation "v" :spacing 20 :space-evenly "false" :vexpand "false" :hexpand "false" 
-                  (label :tooltip "${song.name}" :halign "center" :class "song" :wrap "false" :limit-width 32 :text "${song.name}")
+                  (label :tooltip "${song.name}" :halign "right" :class "song" :wrap "false" :limit-width 32 :text "${song.name}")
                   (label :halign "center" :class "artist" :wrap "false" :limit-width 20 :text "${song.artist}")
                   (box :orientation "h" :spacing 80 :halign "center" :space-evenly "true" :vexpand "false" :hexpand "false" 
                         (button :class "btn_controls" :tooltip "History : ${song.prev}" :onclick "./script prev" "󰒮")

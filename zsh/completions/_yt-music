@@ -3,7 +3,7 @@
 local -a subcmds
 subcmds=(
     'search_play:searches first, then plays the music in mpv'
-    'play:plays the music in mpv'
+    'play:plays the music in mpv,for only id prefix it with ID:'
     'play_next:plays the next music in /tmp/yt-music/next file'
     'loop:plays the next music after the current is finished (run it as a background process)'
 )

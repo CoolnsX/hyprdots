@@ -9,6 +9,8 @@ format = " (bold green)$all"
 [cmd_duration]
 min_time = 70 
 format = " took [$duration]($style)"
+#show_notifications = true
+#min_time_to_notify = 30_000
 
 [directory]
 format = "[$path]($style)[$lock_symbol]($lock_style) "
@@ -64,3 +66,4 @@ style = "bold green"
 [username]
 style_user = "bold fg:#ffa500"
 show_always = true
+

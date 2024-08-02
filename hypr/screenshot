@@ -1,7 +1,28 @@
 #!/bin/sh
 
-icon="/usr/share/icons/Papirus/16x16/apps/applets-screenshooter.svg"
+tmp_file="/tmp/screenshot.png"
+[ -f "$tmp_file" ] && rm -f "$tmp_file"
 killall grim slurp
-[ "$*" = "fullclip" ] && grim - | wl-copy -t image/png && notify-send -e -i "$icon" "Screenshot copied to clipboard"
-[ "$*" = "fullsave" ] && grim "$HOME/Pictures/$(date -u "+%Y-%m-%d_%H-%M-%S").png" && notify-send -e -i "$icon" "Screenshot saved"
-[ "$*" = "selclip" ] && grim -g "$(slurp)" - | wl-copy -t image/png && notify-send -e -i "$icon" "Screenshot copied to clipboard"
+message="Screenshot copied to clipboard." 
+urgency="normal"
+
+case "$1" in
+	fullclip)
+		grim - | tee "$tmp_file" | wl-copy -t image/png
+		;;
+	fullsave) 
+		tmp_file="$HOME/Pictures/$(date -u "+%Y-%m-%d_%H-%M-%S").png"
+		message="Screenshot saved."
+		grim "$tmp_file"
+		;;
+	selclip)
+		grim -g "$(slurp)" - | tee "$tmp_file" | wl-copy -t image/png
+		;;
+	*)
+		message="Please select one from these -- fullclip,fullsave,selclip"
+		urgency="critical"
+		;;
+esac
+
+notify-send -e -h "string:x-canonical-private-synchronous:${0##*/}" -u "$urgency" -i "$tmp_file" "$message"
+

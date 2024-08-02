@@ -15,4 +15,6 @@ gamename=$(basename "$game")
 
 notify-send -e -h "string:x-canonical-private-synchronous:${0##*/}" -i "wine" "Launching $gamename"
 
+trap 'wineserver -k' INT HUP
+
 WINEFSYNC=1 WINEESYNC=1 MANGOHUD=1 gamemoderun wine "$gamename"

@@ -51,6 +51,12 @@ b64() {
 	printf "%s" "$1" | tr "._-" '=/+' | base64 -w 0 $2
 }
 
+gdown () {
+	agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/12$(head /dev/urandom | tr -dc '2-5' | cut -c1).0.0.0 Safari/537.36" 
+	uuid=$(curl -sL "$1" -A "$agent" | sed -nE 's|.*(uuid=[^"]*)".*|\1|p') 
+	aria2c -x16 -s16 "$1&confirm=t&$uuid" -U "$agent" --summary-interval=0 -d "${2:-.}"
+}
+
 mpv_jellyfin() {
 	url=${1:-$(wl-paste)}
 	uuid=$(printf '%s' "$url" | sed -nE 's|.*/Items/([^/]*)/Download.*|\1|p')
@@ -66,8 +72,73 @@ mpv_jellyfin() {
 	unset subtitle sub_arg uuid formatted_uuid key
 }
 
+headless_add() {
+	set -x
+	#define ur preferred port
+	PORT="11000"
+	
+	# check existing headless display
+	headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]).*|\1|p')
+	
+	#create, if not exists
+	[ -z "$headless" ] && hyprctl output create headless | grep -q "ok" && headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]).*|\1|p') && printf '\n\nCreate Headless Display: %s' "$headless"
+	
+	#there is issue
+	[ -z "$headless" ] && printf "Something went wrong\n" && return 1
+	
+	#check for android devices, and select which one u wanna work upon
+	device=$(adb devices | sed '/^\*/d;/^List of devices/d;/^$/d' | cut -f1 | fzf -1)
+	
+	#throw issue if no android has been there
+	[ -z "$device" ] && printf "Unable to detect Android using ADB" && return 1
+	
+	#select device resolution and fps
+	RES=$(adb -s "$device" shell dumpsys display | sed -nE 's|^[[:space:]]*DisplayModeRecord.*width=([0-9]*), height=([0-9]*), fps=([0-9\.]*).*|\2x\1@\3|p' | fzf --prompt="Select Resolution > " -1)
+	
+	#device fps for wayvnc
+	device_fps=$(printf '%s' "$RES" | cut -d'@' -f2)
+	
+	# set resolution,fps, and scaling
+	hyprctl keyword monitor $headless,$RES,'auto','1'
+	
+	# kill existing wayvnc and start a new one
+	pgrep -af "wayvnc" && killall wayvnc
+	setsid -f wayvnc --output="$headless" --max-fps="$device_fps" 0.0.0.0 $PORT
+	
+	#reverse port forward to device, and start VNC
+	adb -s "$device" reverse tcp:$PORT tcp:$PORT
+	adb -s "$device" shell am start --user 0 -a android.intent.action.VIEW -d "vnc://127.0.0.1:$PORT"
+	
+	#cleanup
+	unset PORT headless RES
+	hyprctl dispatch moveworkspacetomonitor 2 1
+	set +x
+}
+
+headless_rm() {
+	set -x
+	pgrep -af "wayvnc" && killall wayvnc
+	headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]).*|\1|p')
+	[ -n "$headless" ] && hyprctl output remove $headless
+	unset headless
+	set +x
+}
+
+get_cookies() {
+	# the user has firefox installed
+	if [ ! -f "$HOME/.config/google-chrome/Default/Cookies" ];then
+		cp "$(find "$HOME/.mozilla" -type f -iname 'cookies.sqlite' | head -1)" "$logdir/cookies.sqlite"
+		sqlite3 "$logdir/cookies.sqlite" "SELECT name, value FROM moz_cookies WHERE host='$1' and name NOT like 'ST-%';" | tr '|\n' '=;'
+		rm "$logdir/cookies.sqlite"
+		return 0
+	fi
+	for i in $(sqlite3 "$HOME/.config/google-chrome/Default/Cookies" "SELECT name,REPLACE(base64(SUBSTR(encrypted_value,4)),CHAR(10),'') FROM cookies WHERE host_key='$1';"); do
+		printf "%s=%s; " "$(printf '%s' "$i" | cut -d'|' -f1)" "$(printf '%s' "$i" | cut -d'|' -f2 | base64 -d | openssl enc -d -aes-128-cbc -K fd621fe5a2b402539dfa147ca9272778 -iv 20202020202020202020202020202020)"
+	done
+}
+
 mkvcinemas() {
-	local base_url="https://mkvcinemas.tokyo"
+	local base_url="https://mkvcinemas.cymru"
 	local agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 	[ -z "$*" ] && printf "Search> " && read -r query || query="$*"
@@ -79,6 +150,14 @@ mkvcinemas() {
 	local url=$(curl -s "$base_url/$movie" -e "$base_url" -LA "$agent" |  sed 's|<span>|\n|g' | sed -nE 's|.*title="([^"]*)" href="([^"]*)" target.*[>|;](.*)</a><.*|\2`[\3] \1|p;' | fzf -0 -d'`' --with-nth 2.. --layout=reverse --height=20 --border | cut -d'`' -f1)
 	[ -z "$url" ] && printf "No Url Selected" && return 1
 	xdg-open "$url"
+}
+
+ntfy() {
+	source $HOME/.config/.env
+
+	ntfy_creds #load
+	curl -s "$NTFY_URL/$NTFY_TOPIC" -d "$1" -H "Authorization: Bearer $NTFY_TOKEN" -H "Title: $2"
+	ntfy_creds "unload" #unload
 }
 
 url_oshi() {
@@ -99,13 +178,18 @@ url_oshi() {
 }
 
 url_nextcloud() {
-	[ ! -f "$HOME/.secrets" ] && notify-send "Credentials not found" -u critical && return 1
-	source "$HOME"/.secrets && load_nextcloud_creds
-	curl "$NC_HOST/remote.php/dav/files/${NC_USER}${NC_FOLDER_PATH}/$(basename "$1")" -b "$NC_COOKIES" -H "Requesttoken: $NC_TOKEN" -T "$1" || return 1
+	[ ! -f "$HOME/.config/.env" ] && notify-send "Credentials not found" -u critical && return 1
+	source "$HOME"/.config/.env
+	nextcloud_creds #load creds
+
+
+	cloudname="$(basename "$1")"
+	curl -u "$NC_USER:$NC_TOKEN" -s "$NC_URL/remote.php/dav/files/${NC_USER}${NC_SHARE_PATH}/$cloudname" -T "$tmp_file" || return 1
 
 	#To enable sharing, the output will be in json containing share link
-	curl -s -b "$NC_COOKIES" -H "Requesttoken: $NC_TOKEN" "$NC_HOST/ocs/v2.php/apps/files_sharing/api/v1/shares" -H 'content-type: application/json' -H 'accept: application/json, text/plain, */*' -H 'OCS-APIRequest: true' --data-raw "{\"path\":\"${NC_FOLDER_PATH}/$(basename "$1")\",\"shareType\":3,\"attributes\":\"[]\"}" | sed -nE 's|.*"url":"([^"]*)".*|\1|p' | sed 's/\\//g' | wl-copy && notify-send "Link copied to clipboard"
-	unset NC_HOST NC_USER NC_FOLDER_PATH NC_TOKEN NC_COOKIES NC_FOLDER_ID
+	curl -u "$NC_USER:$NC_TOKEN" -s "$NC_URL/ocs/v2.php/apps/files_sharing/api/v1/shares" -H 'content-type: application/json' -H 'accept: application/json, text/plain, */*' -H 'OCS-APIRequest: true' --data-raw '{"path":"'"${NC_SHARE_PATH}/$cloudname"'","shareType":3,"expireDate":"'"$expire_date"'"}' | sed -nE 's|.*"url":"([^"]*)".*|\1|p' | sed 's/\\//g' | wl-copy && info "com.github.davidmhewitt.clipped" "2000" "Share Link Created and copied to clipboard"
+	unset NC_URL NC_USER NC_SHARE_PATH NC_TOKEN NC_FOLDER_ID
+	nextcloud_creds "unload"
 }
 
 gtd() {
