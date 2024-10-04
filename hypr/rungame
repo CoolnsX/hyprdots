@@ -5,7 +5,7 @@ gamedir="$HOME/games"
 games=$(find "$gamedir" -maxdepth 2 -type f -name '*.exe' -executable | sed "s|$gamedir/||g;/[U|u]nin.*/d")
 
 [ -z "$games" ] && notify-send -e -u critical "No games installed" && exit 1
-game=$(printf '%s\n' "$games" | bemenu --fn 'JetBrainsMono Nerd Font 15' -i -c -W 0.5 -B 3 -p "PLAY GAME: " -l 15 -P ">> " --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
+game=$(printf '%s\n' "$games" | bemenu --fn 'IBM Plex Sans 15' -i -c -W 0.5 -B 3 -p "PLAY GAME: " -l 15 -P ">> " --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
 
 [ -z "$game" ] && notify-send -e -h "string:x-canonical-private-synchronous:${0##*/}" -u critical "No game selected" && exit 1
 

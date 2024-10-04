@@ -6,7 +6,7 @@ historyfile=$cachedir/dmenu_history
 
 ls /bin >"$cache"
 
-cut -f2 "$historyfile" "$cache" | bemenu -R 20 --fixed-height --fn 'JetBrainsMono Nerd Font 15' -i -c -W 0.5 -B 3 -p "RUN: " -l 15 -P ">>" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT" |
+cut -f2 "$historyfile" "$cache" | bemenu -R 20 --fixed-height --fn 'IBM Plex Sans 15' -i -c -W 0.5 -B 3 -p "RUN: " -l 15 -P ">>" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT" |
 	awk -v histfile="$historyfile" '
 		BEGIN {
 			FS=OFS="\t"

@@ -84,6 +84,15 @@ if not configs.intelephense then
   }
 end
 
+--for enabling phpactor
+lspconfig.phpactor.setup{
+    on_attach = on_attach,
+    init_options = {
+        ["language_server_phpstan.enabled"] = false,
+        ["language_server_psalm.enabled"] = false,
+    }
+}
+
 -- for arduino lsp server
 --local MY_FQBN = "esp8266:esp8266:nodemcu"
 --lspconfig.arduino_language_server.setup {

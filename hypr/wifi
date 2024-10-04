@@ -1,9 +1,93 @@
-#!/bin/bash
-if nmcli radio wifi | grep -q 'enabled'; then
-	nmcli radio wifi off
-	wifi_icon="offline"
-else
-	nmcli radio wifi on
-	wifi_icon="acquiring"
+#!/bin/sh
+
+
+# Wifi wrapper using iwctl
+
+# config
+adapter="wlan0"
+divider="--------------------"
+
+#menu
+menu () {
+	bemenu -R 20 --fn 'IBM Plex Sans 15' -i -c -W 0.5 -B 3 -p "$1" -l 26 -I "${2:-0}" -P ">>" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT" -x "$3"
+}
+
+#notify
+notify() {
+	notify-send -e -h "string:x-canonical-private-synchronous:${0##*/}" "$1" -i "$2" -t "${3:-1200}"
+}
+
+# show list of networks and also the connected one
+show_networks() {
+	iwctl station $adapter get-networks | sed -nE 's|^[[:space:]]*(.*)[[:space:]]*psk.*|\1|p' | tr -cd '[:print:]\n' | sed 's/\[0m[[:space:]]*//g;s/\[1\;90m>[[:space:]]*/(connected) /g' | sed 's/[[:space:]]*$//g'
+}
+
+connect() {
+	temp=$(printf '%s' "$1" | sed -nE 's|\(connected\) (.*)|\1|p')
+	wifi_name=${temp:-$1}
+	output=0
+	if iwctl known-networks "$wifi_name" show | grep -q "$wifi_name"; then
+		iwctl station $adapter connect "$wifi_name"
+	else
+		password=$(: | menu "Enter Password:" "" "indicator")
+		[ -z "$password" ] && notify "No credentials Provided" && return 1
+		notify "Authenticating to $wifi_name" "" "10000"
+		iwctl --passphrase "$password" station $adapter connect "$wifi_name"
+		output=$?
+	fi
+
+	while iwctl station $adapter show | grep -q connecting;do
+		notify "Connecting to $wifi_name"
+		sleep 1
+	done
+
+	if [ "$output" -ne 0 ]; then 
+		notify "Unable to connect to $wifi_name, try again later."
+		return 0
+	fi
+	notify "Connected: $wifi_name"
+}
+
+if iwctl device $adapter show | grep -q 'Powered.*off';then
+	option=$(printf 'Turn On' | menu '[iwd]')
+	[ -z "$option" ] && exit 0
+	iwctl device $adapter set-property Powered on
+	while iwctl device $adapter show | grep -q 'Powered.*off'; do
+		notify "Turning On Wifi"
+		sleep 1
+	done
+	notify "Wifi On"
 fi
-notify-send -e -i "/usr/share/icons/Papirus/16x16/panel/network-wireless-$wifi_icon.svg" "wifi $(nmcli radio wifi)" -h "string:x-canonical-private-synchronous:${0##*/}"
+
+while option=$(printf 'Scan\nDisconnect\nTurn Off\nExit\n%s\n%s' "$divider" "$(show_networks)" | menu "[iwd]"); do
+	case $option in
+		"" | "$divider")
+			notify "Bye.."
+			break
+			;;
+		Scan)
+			iwctl station $adapter scan
+			while iwctl station wlan0 show | grep -q 'Scanning.*yes';do
+				notify "Scanning For Networks"
+				sleep 1
+			done
+			;;
+		Exit)
+			notify "Bye.."
+			break
+			;;
+		Disconnect)
+			iwctl station $adapter disconnect
+			;;
+		"Turn Off")
+			notify "Turning Off Wifi..."
+			iwctl device $adapter set-property Powered off
+			notify "Wifi Off"
+			break
+			;;
+		*)
+			connect "$option"
+			break
+			;;
+	esac
+done

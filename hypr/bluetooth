@@ -257,7 +257,7 @@ show_menu() {
 
 		# Human-readable names of devices, one per line
 		# If scan is off, will only list paired devices
-		devices=$(bluetoothctl devices | grep -F Device | cut -d ' ' -f 3-)
+		devices=$(bluetoothctl devices | sed -nE 's|^Device ([A-Z0-9:]*) (.*)|\2|p')
 
 		# Get controller flags
 		scan=$(scan_on)
@@ -304,7 +304,7 @@ original_args=("$@")
 # dmenu command to pipe into. Extra arguments to dmenu-bluetooth are passed through to dmenu. This
 # allows the user to set fonts, sizes, colours, etc.
 run_dmenu() {
-	bemenu "${original_args[@]}" --fn 'Roboto 16' -i -l 10 -c -W 0.4 -B 3 -p "$1" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT"
+	bemenu "${original_args[@]}" --fn 'IBM Plex Sans 15' -i -l 10 -c -W 0.4 -B 3 -p "$1" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT"
 }
 
 case "$1" in

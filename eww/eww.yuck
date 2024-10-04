@@ -1,11 +1,11 @@
 ;;time
 (defwindow time_1
            :monitor 1
-           :geometry (geometry :x "50px"
-                               :y "20px"
-                               :width "35%"
+           :geometry (geometry :x "30px"
+                               :y "30px"
+                               :width "25%"
                                :height "200px"
-                               :anchor "bottom right")
+                               :anchor "top right")
            :stacking "bg"
            :reserve (struts :distance "40px" :side "top")
            :windowtype "dock"

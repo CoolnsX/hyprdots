@@ -126,9 +126,10 @@ headless_rm() {
 
 get_cookies() {
 	# the user has firefox installed
+	logdir="/tmp"
 	if [ ! -f "$HOME/.config/google-chrome/Default/Cookies" ];then
 		cp "$(find "$HOME/.mozilla" -type f -iname 'cookies.sqlite' | head -1)" "$logdir/cookies.sqlite"
-		sqlite3 "$logdir/cookies.sqlite" "SELECT name, value FROM moz_cookies WHERE host='$1' and name NOT like 'ST-%';" | tr '|\n' '=;'
+		sqlite3 "$logdir/cookies.sqlite" "SELECT name, value FROM moz_cookies WHERE host='.youtube.com' and name NOT like 'ST-%' and name NOT like 'VISITOR%' and name NOT like 'PREF%';" | tr '|\n' '=;'
 		rm "$logdir/cookies.sqlite"
 		return 0
 	fi
@@ -188,7 +189,16 @@ url_nextcloud() {
 
 	#To enable sharing, the output will be in json containing share link
 	curl -u "$NC_USER:$NC_TOKEN" -s "$NC_URL/ocs/v2.php/apps/files_sharing/api/v1/shares" -H 'content-type: application/json' -H 'accept: application/json, text/plain, */*' -H 'OCS-APIRequest: true' --data-raw '{"path":"'"${NC_SHARE_PATH}/$cloudname"'","shareType":3,"expireDate":"'"$expire_date"'"}' | sed -nE 's|.*"url":"([^"]*)".*|\1|p' | sed 's/\\//g' | wl-copy && info "com.github.davidmhewitt.clipped" "2000" "Share Link Created and copied to clipboard"
-	unset NC_URL NC_USER NC_SHARE_PATH NC_TOKEN NC_FOLDER_ID
+	nextcloud_creds "unload"
+}
+
+open_nc_aio() {
+	[ ! -f "$HOME/.config/.env" ] && notify-send "Credentials not found" -u critical && return 1
+	source "$HOME"/.config/.env
+	nextcloud_creds #load creds
+
+	xdg-open $(curl -s "$NC_URL/settings/admin/overview" -u "$NC_USER:$NC_TOKEN" | sed -nE 's|.* href="([^"]*)".*AIO.*|\1|p')
+
 	nextcloud_creds "unload"
 }
 
@@ -212,7 +222,7 @@ gtr() {
 gtu() { [ -z "$1" ] || curl -s "https://api.github.com/search/users?q=$1" | sed -nE 's_.*login": "([^"]*)".*_\1_p' | fzf --layout=reverse --border --height=10 -0; }
 
 clshist() {
-	a=$(cat ~/.histfile | wc -l)
+	a=$(\cat ~/.histfile | wc -l)
 	[ "$a" -gt $HISTSIZE ] && sed -i "1,$((a - HISTSIZE))d" ~/.histfile
 }
 
@@ -236,6 +246,7 @@ rmpkg() {
 # Alias and exports
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export TZ="Asia/Kolkata"
+export PODMAN_COMPOSE_WARNING_LOGS=false
 alias cat="bat -pp --color=always"
 alias open="xdg-open"
 alias cp="cp -v"
@@ -251,6 +262,7 @@ alias ls="lsd --color=auto"
 alias nchh="nvim ~/.config/hypr/hyprland.conf"
 alias shfmt="shfmt -ci -d -w"
 alias reboot_firmware="systemctl reboot --firmware-setup"
+alias sail="PODMAN_COMPOSE_WARNING_LOGS=false ./vendor/bin/sail"
 
 #config
 HISTFILE=~/.histfile

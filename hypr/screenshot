@@ -13,6 +13,7 @@ case "$1" in
 	fullsave) 
 		tmp_file="$HOME/Pictures/$(date -u "+%Y-%m-%d_%H-%M-%S").png"
 		message="Screenshot saved."
+		[ -d "$HOME/Pictures" ] || mkdir -p "$HOME/Pictures"
 		grim "$tmp_file"
 		;;
 	selclip)

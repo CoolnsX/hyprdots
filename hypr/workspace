@@ -1,13 +1,13 @@
 #!/bin/sh
 
 setup_dual_monitor() {
-	sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,highrr,auto,1/g" "$HOME/.config/hypr/hyprland.conf"
-	sleep 2
-	if hyprctl monitors | grep -q "HDMI-A-1"; then
+	monitor=$(hyprctl monitors | sed -nE 's|.*(HDMI-A-[0-9]).*|\1|p')
+	if [ -n "$monitor" ]; then
 		notify-send -e "Setting up dual monitor workflow"
+		hyprctl keyword monitor "$(hyprctl monitors | sed -nE 's|.*(HDMI-A-[0-9]).*|\1|p')",highres,auto,1
 		hyprctl dispatch moveworkspacetomonitor "1 0"
 		hyprctl dispatch moveworkspacetomonitor "2 0"
-		hyprctl dispatch moveworkspacetomonitor "3 0"
+		hyprctl dispatch moveworkspacetomonitor "3 1"
 		hyprctl dispatch moveworkspacetomonitor "4 1"
 		eww kill
 		eww open-many time_1 music_1
@@ -16,13 +16,13 @@ setup_dual_monitor() {
 
 handle_it() {
 	[ -z "$1" ] || notify-send -e "$1"
-	choice=$(printf "Mirror\nExtend" | bemenu --fn 'Roboto 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1 --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
+	choice=$(printf "Mirror\nExtend" | bemenu --fn 'IBM Plex Sans 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1 --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
 	[ -z "$choice" ] && return 0
 	notify-send -e "${choice}ing screen"
 	if [ "$choice" = "Extend" ]; then
-		setup_dual_monitor
+		setup_dual_monitor 
 	else
-		sed -i "s/monitor=,highrr,auto,1/monitor=,1920x1080,0x0,1,mirror,eDP-1/g" "$HOME/.config/hypr/hyprland.conf"
+		hyprctl keyword monitor "$(hyprctl monitors | sed -nE 's|.*(HDMI-A-[0-9]).*|\1|p')",preferred, auto, 1, mirror, eDP-1
 	fi
 }
 
@@ -41,13 +41,8 @@ case $1 in
 		socat - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do
 			printf "%s" "$line" | grep -qE "monitoraddedv2.*HEADLESS" && continue
 			printf "%s" "$line" | grep -q "monitoraddedv2" && handle_it "$line"
-			printf "%s" "$line" | grep -q "monitorremoved" && sed -i "s/monitor=,1920x1080,0x0,1,mirror,eDP-1/monitor=,highrr,auto,1/g" "$HOME/.config/hypr/hyprland.conf" && eww kill && eww open_many time_0 music_0
 			#recent workspace switcher
 			current=$(printf "%s" "$line" | sed -nE 's_^(workspace)v2>>([^,]*),.*_\1 \2_p')
-			if [ -n "$current" ]; then
-				cat /tmp/workcurr >/tmp/workprev
-				printf "%s" "$current" >/tmp/workcurr
-			fi
 			notify-send -e -i "lol" "$current" -h "string:x-canonical-private-synchronous:monitor" -t 700 2>/dev/null
 		done
 		;;

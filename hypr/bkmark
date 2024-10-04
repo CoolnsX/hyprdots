@@ -8,7 +8,7 @@ file="$HOME/.cache/bookmarks"
 oshi_file="$HOME/.cache/oshi-urls"
 
 menu() {
-	bemenu --fn 'Roboto 15' -i -c -W 0.6 -B 3 -l 30 -p "$1" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT"
+	bemenu --fn 'IBM Plex Sans 15' -i -c -W 0.6 -B 3 -l 30 -p "$1" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT"
 }
 
 case $1 in
