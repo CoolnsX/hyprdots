@@ -11,10 +11,10 @@ top -ibn5 -d1 | while read -r line;do
 		temp=$(cat /sys/class/thermal/thermal_zone0/temp)
 		: $((temp /= 1000))
 		bat_stats=$(cat /sys/class/power_supply/BAT0/status)
-		vol_stats=$(pamixer --get-volume-human)
+		vol_stats=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
 		charge=$(cat /sys/class/power_supply/BAT0/capacity)
 		[ "$bat_stats" = "Discharging" ] && { [ "$charge" -lt 20 ] && bat_icon=🪫 || bat_icon=🔋 ;} || bat_icon=🔌
-		[ "$vol_stats" = "muted" ] && vol_icon=🔇 || vol_icon=🔊
-		notify-send -e -i "lol" "<----------(STATS)---------->" "🧠 CPU usage : $cpu\n🌡️ Cpu Temp : $temp °C\n🔳 RAM : $mem\n$bat_icon Battery : $charge (${bat_stats})\n☀️ Brightness : $("$(dirname "$0")"/brightness s)%\n$vol_icon Volume : $vol_stats\n🎵 $SONG - $ARTIST" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500 &
+		printf '%s' "$vol_stats" | grep -q 'MUTED' && vol_icon=🔇 || vol_icon=🔊
+		notify-send -e -i "lol" "<----------(STATS)---------->" "🧠 CPU usage : $cpu\n🌡️ Cpu Temp : $temp °C\n🔳 RAM : $mem\n$bat_icon Battery : $charge (${bat_stats})\n☀️ Brightness : $("$(dirname "$0")"/brightness s)%\n$vol_icon Volume : $(printf '%s' "$vol_stats" | tr -cd '[0-9]' | sed 's|^0||g')%\n🎵 $SONG - $ARTIST" -h "string:x-canonical-private-synchronous:${0##*/}" -t 1500 &
 	fi
 done

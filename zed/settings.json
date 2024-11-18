@@ -7,15 +7,45 @@
 // custom settings, run `zed: open default settings` from the
 // command palette
 {
+  "terminal": {
+    "dock": "bottom"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
+  "features": {
+    "inline_completion_provider": "none"
+  },
+  "ssh_connections": [
+    {
+      "host": "se-live",
+      "projects": [
+        {
+          "paths": ["/var/www/qa/student_edge_admin"]
+        },
+        {
+          "paths": ["/var/www/html/student_edge_admin"]
+        }
+      ]
+    }
+  ],
   "telemetry": {
     "diagnostics": false,
     "metrics": false
   },
+  "soft_wrap": "editor_width",
   "ui_font_size": 16,
-  "buffer_font_size": 16,
+  "buffer_font_size": 14,
+  "ui_font_family": "IBM Plex Sans",
+  "buffer_font_family": "Helvetica",
   "theme": {
     "mode": "system",
-    "light": "Base16 Oxocarbon Dark",
-    "dark": "One Dark"
+    "light": "Base16 Monokai",
+    "dark": "Base16 Monokai"
+  },
+  "languages": {
+    "PHP": {
+      "language_servers": ["intelephense", "!phpactor"]
+    }
   }
 }

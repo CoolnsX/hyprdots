@@ -23,11 +23,8 @@ require('lazy').setup({
     { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } },
     'https://gitlab.com/__tpb/monokai-pro.nvim',
     { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig", },
-     { "nvim-telescope/telescope.nvim" },
-    {
-    	"windwp/nvim-autopairs",
-    	config = function() require("nvim-autopairs").setup {} end
-    },
+    { "nvim-telescope/telescope.nvim" },
+    { "windwp/nvim-autopairs", config = function() require("nvim-autopairs").setup {} end },
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-nvim-lua',
     'gpanders/nvim-parinfer',
@@ -184,12 +181,12 @@ require('lualine').setup {
 --nnoremap <silent> <F12> <Cmd>lua require'dap'.step_out()<CR>
 
 --dap server
-local dap = require('dap')
-    dap.adapters.python = {
-      type = 'executable';
-      command = os.getenv('HOME') .. '/.virtualenvs/tools/bin/python';
-      args = { '-m', 'debugpy.adapter' };
-}
+--local dap = require('dap')
+--    dap.adapters.python = {
+--      type = 'executable';
+--      command = os.getenv('HOME') .. '/.virtualenvs/tools/bin/python';
+--      args = { '-m', 'debugpy.adapter' };
+--}
 
 
 --treesitter
