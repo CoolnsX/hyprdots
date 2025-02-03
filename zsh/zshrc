@@ -75,13 +75,22 @@ mpv_jellyfin() {
 headless_add() {
 	set -x
 	#define ur preferred port
-	PORT="11000"
-	
+	for PORT in {11000..11100};do
+		! ss -tln | grep -q ":$PORT" && break
+	done
+
 	# check existing headless display
-	headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]).*|\1|p')
+	[ -z "$1" ] && headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]*).*|\1|p')
 	
 	#create, if not exists
-	[ -z "$headless" ] && hyprctl output create headless | grep -q "ok" && headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]).*|\1|p') && printf '\n\nCreate Headless Display: %s' "$headless"
+	if [ -z "$headless" ];then
+		hyprctl output create headless | grep -q "ok"
+		for i in $(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]*).*|\1|p');do
+			pgrep -af "wayvnc --output=$i" && continue
+			headless=$i
+		done
+		printf '\n\nCreate Headless Display: %s' "$headless"
+	fi
 	
 	#there is issue
 	[ -z "$headless" ] && printf "Something went wrong\n" && return 1
@@ -98,12 +107,14 @@ headless_add() {
 	#device fps for wayvnc
 	device_fps=$(printf '%s' "$RES" | cut -d'@' -f2)
 	
+	position=$(printf 'auto\nauto-left' | fzf --prompt="Which position? >")
+
 	# set resolution,fps, and scaling
-	hyprctl keyword monitor $headless,$RES,'auto','1'
+	hyprctl keyword monitor $headless,$RES,$position,'1'
 	
 	# kill existing wayvnc and start a new one
-	pgrep -af "wayvnc" && killall wayvnc
-	setsid -f wayvnc --output="$headless" --max-fps="$device_fps" 0.0.0.0 $PORT
+	#pgrep -af "wayvnc" && killall wayvnc
+	setsid -f wayvnc --output="$headless" --socket="/tmp/$headless" --max-fps="$device_fps" 0.0.0.0 $PORT
 	
 	#reverse port forward to device, and start VNC
 	adb -s "$device" reverse tcp:$PORT tcp:$PORT
@@ -117,9 +128,10 @@ headless_add() {
 
 headless_rm() {
 	set -x
-	pgrep -af "wayvnc" && killall wayvnc
-	headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]).*|\1|p')
+	headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]*).*|\1|p' | fzf --prompt="Select Which Device to Remove >" -0 -1)
 	[ -n "$headless" ] && hyprctl output remove $headless
+	pid=$(pgrep -af "wayvnc --output=$headless" | cut -d' ' -f1)
+	kill -9 $pid
 	unset headless
 	set +x
 }
@@ -129,7 +141,7 @@ get_cookies() {
 	logdir="/tmp"
 	if [ ! -f "$HOME/.config/google-chrome/Default/Cookies" ];then
 		cp "$(find "$HOME/.mozilla" -type f -iname 'cookies.sqlite' | head -1)" "$logdir/cookies.sqlite"
-		sqlite3 "$logdir/cookies.sqlite" "SELECT name, value FROM moz_cookies WHERE host='.youtube.com' and name NOT like 'ST-%' and name NOT like 'VISITOR%' and name NOT like 'PREF%';" | tr '|\n' '=;'
+		sqlite3 "$logdir/cookies.sqlite" "SELECT name, value FROM moz_cookies WHERE host='$1';" | tr '|\n' '=;'
 		rm "$logdir/cookies.sqlite"
 		return 0
 	fi

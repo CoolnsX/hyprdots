@@ -4,7 +4,7 @@
     "command": "php artisan serve",
     "use_new_terminal": false,
     "allow_concurrent_runs": false,
-    "reveal": "always",
+    "reveal": "never",
     "hide": "never",
     "shell": "system"
   },
@@ -19,7 +19,7 @@
   },
   {
     "label": "Laravel Sail Start",
-    "command": "./vendor/bin/sail up",
+    "command": "systemctl is-active docker.socket && ./vendor/bin/sail up",
     "use_new_terminal": false,
     "allow_concurrent_runs": true,
     "reveal": "always",
@@ -28,7 +28,7 @@
   },
   {
     "label": "Laravel Sail NPM Start",
-    "command": "./vendor/bin/sail npm run dev",
+    "command": "systemctl is-active docker.socket && ./vendor/bin/sail npm run dev",
     "use_new_terminal": false,
     "allow_concurrent_runs": true,
     "reveal": "always",

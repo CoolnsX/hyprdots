@@ -16,7 +16,7 @@
            :monitor 0
            :geometry (geometry :x "30px"
                                :y "30px"
-                               :width "32%"
+                               :width "28%"
                                :height "200px"
                                :anchor "top right")
            :stacking "bg"

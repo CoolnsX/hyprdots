@@ -2,9 +2,10 @@
 
 setup_dual_monitor() {
 	monitor=$(hyprctl monitors | sed -nE 's|.*(HDMI-A-[0-9]).*|\1|p')
+	[ -z "$monitor" ] && monitor=$(hyprctl monitors | sed -nE 's|.* (DP-[0-9]).*|\1|p')
 	if [ -n "$monitor" ]; then
 		notify-send -e "Setting up dual monitor workflow"
-		hyprctl keyword monitor "$(hyprctl monitors | sed -nE 's|.*(HDMI-A-[0-9]).*|\1|p')",highres,auto,1
+		hyprctl keyword monitor "$monitor",highres,auto,1
 		hyprctl dispatch moveworkspacetomonitor "1 0"
 		hyprctl dispatch moveworkspacetomonitor "2 0"
 		hyprctl dispatch moveworkspacetomonitor "3 1"
@@ -16,7 +17,7 @@ setup_dual_monitor() {
 
 handle_it() {
 	[ -z "$1" ] || notify-send -e "$1"
-	choice=$(printf "Mirror\nExtend" | bemenu --fn 'IBM Plex Sans 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1 --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
+	choice=$(printf "Extend\nMirror" | bemenu --fn 'IBM Plex Sans 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1 --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
 	[ -z "$choice" ] && return 0
 	notify-send -e "${choice}ing screen"
 	if [ "$choice" = "Extend" ]; then

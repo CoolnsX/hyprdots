@@ -2,7 +2,7 @@
 
 gamedir="$HOME/games"
 
-games=$(find "$gamedir" -maxdepth 2 -type f -name '*.exe' -executable | sed "s|$gamedir/||g;/[U|u]nin.*/d")
+games=$(find "$gamedir" -maxdepth 5 -type f -name '*.exe' -executable | sed "s|$gamedir/||g;/[U|u]nin.*/d")
 
 [ -z "$games" ] && notify-send -e -u critical "No games installed" && exit 1
 game=$(printf '%s\n' "$games" | bemenu --fn 'IBM Plex Sans 15' -i -c -W 0.5 -B 3 -p "PLAY GAME: " -l 15 -P ">> " --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
@@ -17,4 +17,8 @@ notify-send -e -h "string:x-canonical-private-synchronous:${0##*/}" -i "wine" "L
 
 trap 'wineserver -k' INT HUP
 
-WINEFSYNC=1 WINEESYNC=1 MANGOHUD=1 gamemoderun wine "$gamename"
+#DXVK_CONFIG=dxgi.hideAmdGpu=True WINEFSYNC=1 WINEESYNC=1 MANGOHUD=1 gamescope -W 1280 -H 800 -r 60 -- gamemoderun wine "$gamename"
+
+#hyprctl keyword monitor "eDP-1",'1280x800@120','auto','1'
+WINEFSYNC=1 WINEESYNC=1 MANGOHUD=1 gamemoderun wine "$gamename" -windowed
+#hyprctl keyword monitor "eDP-1",highrr,'auto','1.5'

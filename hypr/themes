@@ -1,0 +1,5 @@
+#!/bin/sh
+
+gsettings set org.gnome.desktop.interface gtk-theme Materia-dark
+gsettings set org.gnome.desktop.interface icon-theme ePapirus-Dark
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'

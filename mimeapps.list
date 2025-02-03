@@ -38,6 +38,7 @@ application/x-extension-xhtml=firefox.desktop
 application/x-extension-xht=firefox.desktop
 application/x-bittorrent=torrent.desktop
 x-scheme-handler/magnet=torrent.desktop
+hoppscotch=hoppscotch-handler.desktop
 
 [Added Associations]
 video/x-matroska=mpv.desktop;
@@ -59,3 +60,4 @@ video/mpeg=firefox.desktop;
 x-scheme-handler/magnet=torrent.desktop;
 application/x-bittorrent=torrent.desktop;
 application/x-desktop=nvim.desktop;
+application/x-php=firefox.desktop;
