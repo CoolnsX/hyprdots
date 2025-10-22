@@ -1,11 +1,3 @@
-// Zed settings
-//
-// For information on how to configure Zed, see the Zed
-// documentation: https://zed.dev/docs/configuring-zed
-//
-// To see all of Zed's default settings without changing your
-// custom settings, run `zed: open default settings` from the
-// command palette
 {
   "terminal": {
     "dock": "bottom"
@@ -14,17 +6,22 @@
     "dock": "right"
   },
   "features": {
-    "inline_completion_provider": "none"
+    "edit_prediction_provider": "none"
   },
   "ssh_connections": [
     {
       "host": "se-live",
       "projects": [
         {
-          "paths": ["/var/www/qa/student_edge_admin"]
-        },
-        {
           "paths": ["/var/www/html/student_edge_admin"]
+        }
+      ]
+    },
+    {
+      "host": "se-gcp",
+      "projects": [
+        {
+          "paths": ["/var/www/qa/student_edge_admin"]
         }
       ]
     }
@@ -35,10 +32,11 @@
   },
   "soft_wrap": "editor_width",
   "ui_font_size": 16,
-  "buffer_font_size": 14,
+  "buffer_font_size": 14.0,
   "ui_font_family": "IBM Plex Sans",
   "buffer_font_family": "Helvetica",
-  "format_on_save": "off",
+  "tab_size": 4,
+  "format_on_save": "on",
   "theme": {
     "mode": "dark",
     "light": "Base16 Monokai",
@@ -46,7 +44,8 @@
   },
   "languages": {
     "PHP": {
-      "language_servers": ["intelephense", "!phpactor"]
+      "language_servers": ["intelephense","!phpactor"],
+      "format_on_save": "off"
     }
   }
 }

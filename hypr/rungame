@@ -1,6 +1,6 @@
 #!/bin/sh
 
-gamedir="$HOME/games"
+gamedir="$HOME/Games"
 
 games=$(find "$gamedir" -maxdepth 5 -type f -name '*.exe' -executable | sed "s|$gamedir/||g;/[U|u]nin.*/d")
 
@@ -19,6 +19,6 @@ trap 'wineserver -k' INT HUP
 
 #DXVK_CONFIG=dxgi.hideAmdGpu=True WINEFSYNC=1 WINEESYNC=1 MANGOHUD=1 gamescope -W 1280 -H 800 -r 60 -- gamemoderun wine "$gamename"
 
-#hyprctl keyword monitor "eDP-1",'1280x800@120','auto','1'
-WINEFSYNC=1 WINEESYNC=1 MANGOHUD=1 gamemoderun wine "$gamename" -windowed
-#hyprctl keyword monitor "eDP-1",highrr,'auto','1.5'
+#hyprctl keyword monitor "eDP-1",'1280x800@60','auto','1'
+WINEFSYNC=1 WINEESYNC=1 MANGOHUD=1 env -u DISPLAY gamemoderun wine "$gamename"
+#hyprctl keyword monitor "eDP-1",highrr,'auto','1'

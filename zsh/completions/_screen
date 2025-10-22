@@ -1,0 +1,15 @@
+#compdef yt-music
+
+local -a subcmds
+subcmds=(
+    'record:shows the record page, then starts recording'
+    'stop:stops the current recording.'
+    'compress:compress the given video to target size (default: 25 MB)'
+)
+
+if (( $#words > 3 )); then
+    return 1
+fi
+
+# Describe the available subcommands
+_describe 'command' subcmds

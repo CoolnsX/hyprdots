@@ -1,0 +1,12 @@
+[General]
+TerminalApplication=foot
+
+[Icons]
+Theme=Papirus-Dark
+
+[PreviewSettings]
+EnableRemoteFolderThumbnail=false
+MaximumRemoteSize=0
+
+[UiSettings] 
+ColorScheme=Materia-dark

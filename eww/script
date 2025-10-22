@@ -36,10 +36,10 @@ case $1 in
 		echo cycle pause | socat - "$datadir/yt-music-mpvsocket"
 		;;
 	next)
-		pgrep -f mpvsocket >/dev/null 2>&1 && "$HOME/repos_scripts/yt-music" play_next
+		pgrep -f mpvsocket >/dev/null 2>&1 && flock -n /tmp/yt-music/play_next.lock "$HOME/repos_scripts/yt-music" play_next
 		;;
 	prev)
-		pgrep -f mpvsocket >/dev/null 2>&1 && counter=$(cat "$datadir/counter") && [ "$counter" -gt 0 ] && "$HOME/repos_scripts/yt-music" play "$(sed -n "${counter}p" "$datadir/next")" && printf "%s" "$((counter-1))" > "$datadir/counter" &
+		pgrep -f mpvsocket >/dev/null 2>&1 && counter=$(cat "$datadir/counter") && [ "$counter" -gt 0 ] && flock -n /tmp/yt-music/play_prev.lock "$HOME/repos_scripts/yt-music" play "$(sed -n "${counter}p" "$datadir/next")" && printf "%s" "$((counter-1))" > "$datadir/counter" &
 		;;
 	seek)
 		echo '{"command" :["seek" ,"'"$2"'","relative-percent"]}' | socat - "$datadir/yt-music-mpvsocket"

@@ -30,7 +30,7 @@ max=$(cat "$root_dir/$backlight_dir/max_brightness")
 
 #runtime values
 opr=$1 # [+|-], required
-increment=${2:-5} # [ default:5, optional] "around 2% brightness"
+increment=${2:-1296} # [ default:1296, optional] "around 2% brightness"
 
 #shellcheck disable=SC2004
 [ "$opr" = "s" ] && printf "%s" "$((${current}00/${max}))" && exit 0

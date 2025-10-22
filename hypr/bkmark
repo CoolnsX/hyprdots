@@ -2,25 +2,22 @@
 
 #script for bookmarking selected items and later using it..
 
-data="$(wl-paste -p | tr '\n' '\`' | sed 's/$/ /g')"
+data="$(wl-paste -p | tr '\n' '\`' | sed 's/$/ /g' | base64)"
 
 file="$HOME/.cache/bookmarks"
-oshi_file="$HOME/.cache/oshi-urls"
 
 menu() {
-	bemenu --fn 'IBM Plex Sans 15' -i -c -W 0.6 -B 3 -l 30 -p "$1" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT"
+	bemenu -R 20 --fn 'IBM Plex Sans 15' -i -c -W 0.6 -B 3 -l 30 -p "$1" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT"
 }
 
 case $1 in
 	add)
-		if [ -z "$data" ]; then
-			notify-send -e "Please select anything to bookmark"
-		elif grep -q "${data}" "$file"; then
-			notify-send -e -i "bookmark-missing" "Already bookmarked"
-		else
-			printf "%s" "$data" >>"$file"
-			notify-send -e -i "user-bookmarks" "Bookmarked" "$data"
-		fi
+		[ -z "$data" ] && notify-send -e "Please select anything to bookmark" && exit 1
+		grep -q "${data}" "$file" && notify-send -e -i "bookmark-missing" "Already bookmarked" && exit 1
+		label=$(cut -d '|' -f1 .cache/bookmarks | sed '/^$/d' | tr -d ' ' | menu "Enter Label : ")
+		[ -z "$label" ] && notify-send -e "Please enter label for identification" && exit 1
+		printf "%s | %s" "$label" "$data" >>"$file"
+		notify-send -e -i "user-bookmarks" "Bookmarked" "$label | $data"
 		;;
 	rm)
 		data="$(sed '/^$/d' "$file" | nl -n'ln')"
@@ -29,12 +26,12 @@ case $1 in
 		[ -z "$del" ] || (sed -i "${del}d" "$file" && notify-send -e -i "bookmark-missing" "Bookmark deleted" -u critical)
 		;;
 	copy)
-		data=$(sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "COPY-bookmark :" | tr '\`' '\n')
+		data=$(sed '/^$/d' "$file" | menu "COPY-bookmark :" | cut -d'|' -f2 | tr -d ' ' | base64 -d | tr '\`' '\n')
 		[ -z "$data" ] && notify-send -e -u critical "No Bookmark selected" && exit 1
 		printf '%s' "$data" | wl-copy && notify-send -e "Copied to clipboard" -i "com.github.davidmhewitt.clipped"
 		;;
 	*)
-		result="$(sed '/^$/d' "$file" "$oshi_file" | sed -E 's/.*DL: ([^|]*).*/\1/g' | menu "Put-bookmark :" | tr '\`' '\n')"
+		result="$(sed '/^$/d' "$file" | menu "Put-bookmark :" | cut -d'|' -f2 | tr -d ' ' | base64 -d | tr '\`' '\n')"
 		if printf '%s' "$result" | grep -q 'B>'; then
 			google-chrome-stable "$(printf '%s' "$result" | cut -d'>' -f2- | tr -d '\n ')"
 		else

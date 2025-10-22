@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# make window floating
+hyprctl dispatch togglefloating
+socket_file="/tmp/jellyfin-mpvsocket"
+
+# use fallback if specified file doesn't exist
+[ -e "$socket_file" ] || socket_file="/tmp/mpvsocket"
+
+# dimension to resize the mpv window
+dimension=$(printf '{ "command": ["get_property", "width"] }\n{ "command": ["get_property", "height"] }\n' | socat - "$socket_file" | sed -nE 's|.*"data":([^,]*),.*|\1|p' | tr '\n' ' ')
+
+# resize window to match video resolution
+hyprctl dispatch resizeactive exact $dimension
+
+# move window to bottom right
+hyprctl dispatch movewindow r
+hyprctl dispatch movewindow d
+
+#pin
+#hyprctl dispatch pin

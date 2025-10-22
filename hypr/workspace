@@ -17,7 +17,7 @@ setup_dual_monitor() {
 
 handle_it() {
 	[ -z "$1" ] || notify-send -e "$1"
-	choice=$(printf "Extend\nMirror" | bemenu --fn 'IBM Plex Sans 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1 --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
+	choice=$(printf "Extend\nMirror" | bemenu -R 20 --fn 'IBM Plex Sans 15' -i -c -W 0.2 -B 3 -l 20 -p "what to do??: " -m 1 --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT")
 	[ -z "$choice" ] && return 0
 	notify-send -e "${choice}ing screen"
 	if [ "$choice" = "Extend" ]; then
@@ -44,7 +44,7 @@ case $1 in
 			printf "%s" "$line" | grep -q "monitoraddedv2" && handle_it "$line"
 			#recent workspace switcher
 			current=$(printf "%s" "$line" | sed -nE 's_^(workspace)v2>>([^,]*),.*_\1 \2_p')
-			notify-send -e -i "lol" "$current" -h "string:x-canonical-private-synchronous:monitor" -t 700 2>/dev/null
+			[ -n "$current" ] && notify-send -e -i "lol" "$current" -h "string:x-canonical-private-synchronous:monitor" -t 700 2>/dev/null
 		done
 		;;
 	toggle)
