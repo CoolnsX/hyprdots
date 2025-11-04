@@ -55,20 +55,21 @@ deploy() {
 }
 
 clshist() {
+	[ -z "$ZED_TERM" ] || return 0
 	tmpfile="${TMPDIR:-/tmp}/histfile"
 
 	# keep recent entries at bottom
-	tac "$HISTFILE" | awk '!seen[$0]++' | tac >"$tmpfile"
+	tac "$HISTFILE" | awk '!seen[$0]++' | tac | tee "$tmpfile" >/dev/null
 
 	# Trim to HISTSIZE (default:1000)
-	local total_lines
 	total_lines=$(wc -l <"$tmpfile")
 	if [ "$total_lines" -gt "${HISTSIZE:-1000}" ]; then
 		sed -i "1,$((total_lines - HISTSIZE))d" "$tmpfile"
 	fi
 
 	# Replace original file
-	mv "$tmpfile" "$HISTFILE"
+	[ -f "$tmpfile" ] && mv "$tmpfile" "$HISTFILE"
+	unset tmpfile total_lines
 }
 
 v() {

@@ -24,7 +24,7 @@ alias reboot_firmware="systemctl reboot --firmware-setup"
 alias sail="./vendor/bin/sail"
 
 #config
-HISTFILE=~/.histfile
+HISTFILE=$HOME/.histfile
 HISTSIZE=500
 SAVEHIST=500
 clshist
