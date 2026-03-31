@@ -1,4 +1,11 @@
 {
+  "git": {
+    "inline_blame": {
+      "show_commit_summary": true
+    }
+  },
+  "disable_ai": false,
+  "buffer_line_height": "comfortable",
   "terminal": {
     "dock": "bottom"
   },
@@ -8,24 +15,7 @@
   "features": {
     "edit_prediction_provider": "none"
   },
-  "ssh_connections": [
-    {
-      "host": "se-live",
-      "projects": [
-        {
-          "paths": ["/var/www/html/student_edge_admin"]
-        }
-      ]
-    },
-    {
-      "host": "se-gcp",
-      "projects": [
-        {
-          "paths": ["/var/www/qa/student_edge_admin"]
-        }
-      ]
-    }
-  ],
+  "ssh_connections": [],
   "telemetry": {
     "diagnostics": false,
     "metrics": false
@@ -50,7 +40,14 @@
       "format_on_save": "off",
     },
     "JavaScript": {
-    "tab_size": 4,
+      "tab_size": 4,
+    },
+    "Python": {
+      "tab_size": 4,
+    },
+    "yaml": {
+      "format_on_save": "off",
+      "tab_size": 4,
     }
   },
 }

@@ -2,7 +2,7 @@
 
 #shellcheck disable=SC2068
 wpctl $@
-vol=$(wpctl get-volume @DEFAULT_AUDIO_SINK@) 
+vol=$(wpctl get-volume @DEFAULT_SINK@) 
 vol_int=$(printf '%s' "$vol" | tr -cd '[:digit:]')
 vol_icon="low"
 [ "$vol_int" -gt 33 ] && vol_icon="medium"

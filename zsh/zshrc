@@ -1,11 +1,20 @@
 #source user-defined functions
-source "${${(%):-%x}:A:h}/zsh_functions"
+source "${${(%):-%x}:A:h}/functions"
 
-# Alias and exports
+# EXPORTS
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export TZ="Asia/Kolkata"
 export PODMAN_COMPOSE_WARNING_LOGS=false
-export PATH="$PATH:$HOME/repos_scripts:$HOME/.local/bin"
+export PATH="$PATH:$HOME/scripts:$HOME/.local/bin"
+
+# XDG SPECS
+export XDG_DOWNLOAD_DIR="$HOME/dls"
+export XDG_DOCUMENTS_DIR="$HOME/docs"
+export XDG_MUSIC_DIR="$HOME/music"
+export XDG_PICTURES_DIR="$HOME/pics"
+export XDG_VIDEOS_DIR="$HOME/vids"
+
+# ALIASES
 alias cat="bat -pp --color=always"
 alias open="xdg-open"
 alias cp="cp -v"

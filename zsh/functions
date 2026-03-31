@@ -56,7 +56,7 @@ deploy() {
 
 clshist() {
 	[ -z "$ZED_TERM" ] || return 0
-	tmpfile="${TMPDIR:-/tmp}/histfile"
+	tmpfile="$(mktemp)"
 
 	# keep recent entries at bottom
 	tac "$HISTFILE" | awk '!seen[$0]++' | tac | tee "$tmpfile" >/dev/null
@@ -84,7 +84,9 @@ help() {
 # Git Related Functions #
 #########################
 gtp() {
-	[ -z "$*" ] && commit=$(curl -s "https://raw.githubusercontent.com/ngerakines/commitment/master/commit_messages.txt" | shuf -n1) || commit=$*
+	cache_file="${XDG_CACHE_HOME:-$HOME/.cache}/.commit_messages"
+	curl -sL "https://raw.githubusercontent.com/ngerakines/commitment/master/commit_messages.txt" --etag-compare "$cache_file.etag" --etag-save "$cache_file.etag" -o "$cache_file"
+	[ -z "$*" ] && commit=$(shuf -n1 "$cache_file") || commit=$*
 	git add -p
 	git commit -m "$commit"
 	git push
@@ -129,26 +131,6 @@ gtu() {
 ##################################
 headless_add() {
 	set -x
-	#define ur preferred port
-	for PORT in {11000..11100}; do
-		! ss -tln | grep -q ":$PORT" && break
-	done
-
-	# check existing headless display
-	[ -z "$1" ] && headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]*).*|\1|p')
-
-	#create, if not exists
-	if [ -z "$headless" ]; then
-		hyprctl output create headless | grep -q "ok"
-		for i in $(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]*).*|\1|p'); do
-			pgrep -af "wayvnc --output=$i" && continue
-			headless=$i
-		done
-		printf '\n\nCreate Headless Display: %s' "$headless"
-	fi
-
-	#there is issue
-	[ -z "$headless" ] && printf "Something went wrong\n" && return 1
 
 	#check for android devices, and select which one u wanna work upon
 	device=$(adb devices | sed '/^\*/d;/^List of devices/d;/^$/d' | cut -f1 | fzf -1)
@@ -161,15 +143,29 @@ headless_add() {
 
 	#device fps for wayvnc
 	device_fps=$(printf '%s' "$RES" | cut -d'@' -f2)
-
 	position=$(printf 'auto\nauto-left' | fzf --prompt="Which position? >")
+
+	headless="HEADLESS-ANDROID-$device"
+
+	#create, if not exists
+	if ! hyprctl monitors | grep -q "$headless"; then
+		hyprctl output create headless "$headless" | grep -q 'ok' && printf '\n\nCreate Headless Display: %s' "$headless"
+	fi
+
+	#there is issue
+	[ -z "$headless" ] && printf "Something went wrong\n" && return 1
 
 	# set resolution,fps, and scaling
 	hyprctl keyword monitor $headless,$RES,$position,'1'
 
+	#define ur preferred port
+	for PORT in {11000..11100}; do
+		! ss -tln | grep -q ":$PORT" && break
+	done
+
 	# kill existing wayvnc and start a new one
 	#pgrep -af "wayvnc" && killall wayvnc
-	setsid -f wayvnc --output="$headless" --socket="/tmp/$headless" --max-fps="$device_fps" 0.0.0.0 $PORT
+	setsid -f wayvnc --output="$headless" --disable-input --socket="/tmp/$headless" --max-fps="$device_fps" 0.0.0.0 $PORT
 
 	#reverse port forward to device, and start VNC
 	adb -s "$device" reverse tcp:$PORT tcp:$PORT
@@ -183,7 +179,7 @@ headless_add() {
 
 headless_rm() {
 	set -x
-	headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-[0-9]*).*|\1|p' | fzf --prompt="Select Which Device to Remove >" -0 -1)
+	headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-ANDROID-[^ ]*).*|\1|p' | fzf --prompt="Select Which Device to Remove >" -0 -1)
 	[ -n "$headless" ] && hyprctl output remove $headless
 	pid=$(pgrep -af "wayvnc --output=$headless" | cut -d' ' -f1)
 	kill -9 $pid
@@ -317,3 +313,5 @@ vpn() {
 	[ "$query" = "start" ] && ! tailscale status | grep -qi 'tailscale is stopped' && doas tailscale down
 	doas systemctl $query openvpn-client@vpn.service && printf "Openvpn %sed" "$query"
 }
+
+# vim: ft=zsh

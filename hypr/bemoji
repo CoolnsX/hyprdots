@@ -1,30 +1,22 @@
 #!/bin/sh
 
-menu() {
-	bemenu --fn 'IBM Plex Sans 15' -i -c -W "0.${2:-4}" -B 3 -l 20 -p "$1" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT"
-}
-
 notify() {
 	notify-send -e "$1" -h "string:x-canonical-private-synchronous:${0##*/}" -i "$2" -u "${3:-normal}"
 }
 
 download_emoji_file(){
-	notify "Downloading Emoji Database..." "downloader"
-	if curl -sL "https://unicode.org/Public/emoji/latest/emoji-test.txt" | sed -nE 's|.*fully-qualified.*# (.*)|\1|p' > "$1"; then 
-		notify "Emoji Database Downloaded" "downloader"
-	else
-		notify "Something Went wrong" "downloader" "critical"
-	fi
+	etag_file="$1.etag"
+	notify "Syncing Emoji Database..." "downloader"
+	curl -sL "https://unicode.org/Public/emoji/latest/emoji-test.txt" --etag-compare "$etag_file" --etag-save "$etag_file" -o "$1"
 }
 
-
-emoji_file="${XDG_CACHE_DIR:-$HOME/.cache}/${0##*/}"
+emoji_file="${XDG_CACHE_DIR:-$HOME/.cache}/.${0##*/}"
 
 # check emoji file
-[ -f "$emoji_file" ] || download_emoji_file "$emoji_file"
+download_emoji_file "$emoji_file"
 
 # copy and write emoji to input
-emoji=$(menu "EMOJI : " < "$emoji_file" | cut -d' ' -f1 | tr -d '\n')
+emoji=$(sed -nE 's|.*fully-qualified.*# (.*)|\1|p' "$emoji_file" | bemenu --fn 'IBM Plex Sans 15' -i -c -W "0.${2:-4}" -B 3 -l 20 -p "EMOJI : " --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT" -R 20 | cut -d' ' -f1 | tr -d '\n')
 
 # validation
 [ -z "$emoji" ] && notify "No Emoji Selected" "" "critical" && exit 1

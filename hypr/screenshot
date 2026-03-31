@@ -11,9 +11,10 @@ case "$1" in
 		grim - | tee "$tmp_file" | wl-copy -t image/png
 		;;
 	fullsave) 
-		tmp_file="$HOME/Pictures/$(date -u "+%Y-%m-%d_%H-%M-%S").png"
+		pics_dir="${XDG_PICTURES_DIR:-$HOME/pics}"
+		[ -d "$pics_dir" ] || mkdir -p "$pics_dir"
+		tmp_file="$pics_dir/$(date -u "+%Y-%m-%d_%H-%M-%S").png"
 		message="Screenshot saved."
-		[ -d "$HOME/Pictures" ] || mkdir -p "$HOME/Pictures"
 		grim "$tmp_file"
 		;;
 	selclip)
