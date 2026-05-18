@@ -19,6 +19,11 @@ if not vim.loop.fs_stat(lazypath) then
 end
 set.rtp:prepend(lazypath)
 require('lazy').setup({
+    {
+	'nvim-treesitter/nvim-treesitter',
+	lazy = false,
+	build = ':TSUpdate'
+    },
     'wbthomason/packer.nvim',
     { 'nvim-lualine/lualine.nvim', requires = { 'kyazdani42/nvim-web-devicons', opt = true } },
     'https://gitlab.com/__tpb/monokai-pro.nvim',
@@ -58,16 +63,11 @@ require("mason-lspconfig").setup {
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
-local lspconfig = require('lspconfig')
-
 --for enabling phpactor
-lspconfig.phpactor.setup{
-    on_attach = on_attach,
-    init_options = {
-        ["language_server_phpstan.enabled"] = true,
-        ["language_server_psalm.enabled"] = false,
-    }
-}
+vim.lsp.config("phpactor", {
+  capabilities = capabilities,
+  on_attach = on_attach,
+})
 
 -- for arduino lsp server
 --local MY_FQBN = "esp8266:esp8266:nodemcu"
@@ -82,11 +82,13 @@ lspconfig.phpactor.setup{
 
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'bashls', 'pyright', 'lua_ls', 'html' ,'cssls'}
-for _, lsp in ipairs(servers) do
-  lspconfig[lsp].setup {
-	  capabilities = capabilities,
-  }
+local servers = { 'bashls', 'pyright', 'lua_ls', 'html' ,'cssls', 'phpactor'}
+for _, name in ipairs(servers) do
+  vim.lsp.config(name, {
+    capabilities = capabilities,
+    on_attach = on_attach,
+  })
+  vim.lsp.enable(name)
 end
 
 -- luasnip setup

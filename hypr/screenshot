@@ -3,14 +3,14 @@
 tmp_file="/tmp/screenshot.png"
 [ -f "$tmp_file" ] && rm -f "$tmp_file"
 killall grim slurp
-message="Screenshot copied to clipboard." 
+message="Screenshot copied to clipboard."
 urgency="normal"
 
 case "$1" in
 	fullclip)
 		grim - | tee "$tmp_file" | wl-copy -t image/png
 		;;
-	fullsave) 
+	fullsave)
 		pics_dir="${XDG_PICTURES_DIR:-$HOME/pics}"
 		[ -d "$pics_dir" ] || mkdir -p "$pics_dir"
 		tmp_file="$pics_dir/$(date -u "+%Y-%m-%d_%H-%M-%S").png"
@@ -27,4 +27,3 @@ case "$1" in
 esac
 
 notify-send -e -h "string:x-canonical-private-synchronous:${0##*/}" -u "$urgency" -i "$tmp_file" "$message"
-

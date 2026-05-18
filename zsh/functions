@@ -165,7 +165,7 @@ headless_add() {
 
 	# kill existing wayvnc and start a new one
 	#pgrep -af "wayvnc" && killall wayvnc
-	setsid -f wayvnc --output="$headless" --disable-input --socket="/tmp/$headless" --max-fps="$device_fps" 0.0.0.0 $PORT
+	setsid -f wayvnc --gpu --output="$headless" --disable-input --socket="/tmp/$headless" --max-fps="$((device_fps * 2))" 0.0.0.0 $PORT
 
 	#reverse port forward to device, and start VNC
 	adb -s "$device" reverse tcp:$PORT tcp:$PORT
@@ -181,7 +181,7 @@ headless_rm() {
 	set -x
 	headless=$(hyprctl monitors | sed -nE 's|.*(HEADLESS-ANDROID-[^ ]*).*|\1|p' | fzf --prompt="Select Which Device to Remove >" -0 -1)
 	[ -n "$headless" ] && hyprctl output remove $headless
-	pid=$(pgrep -af "wayvnc --output=$headless" | cut -d' ' -f1)
+	pid=$(pgrep "wayvnc --gpu --output=$headless" | cut -d' ' -f1)
 	kill -9 $pid
 	unset headless
 	set +x

@@ -4,7 +4,7 @@ notify() {
 	notify-send -e "$1" -h "string:x-canonical-private-synchronous:${0##*/}" -i "$2" -u "${3:-normal}"
 }
 
-download_emoji_file(){
+download_emoji_file() {
 	etag_file="$1.etag"
 	notify "Syncing Emoji Database..." "downloader"
 	curl -sL "https://unicode.org/Public/emoji/latest/emoji-test.txt" --etag-compare "$etag_file" --etag-save "$etag_file" -o "$1"
@@ -21,7 +21,7 @@ emoji=$(sed -nE 's|.*fully-qualified.*# (.*)|\1|p' "$emoji_file" | bemenu --fn '
 # validation
 [ -z "$emoji" ] && notify "No Emoji Selected" "" "critical" && exit 1
 
-# copy to clipboard 
+# copy to clipboard
 printf "%s" "$emoji" | wl-copy && notify "Copied: $emoji" "lol"
 
 # enter in text

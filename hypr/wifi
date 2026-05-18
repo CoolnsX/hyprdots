@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 # Wifi wrapper using iwctl
 
 # config
@@ -8,7 +7,7 @@ adapter="wlan0"
 divider="--------------------"
 
 #menu
-menu () {
+menu() {
 	bemenu -R 20 --fn 'IBM Plex Sans 15' -i -c -W 0.5 -B 3 -p "$1" -l 26 -I "${2:-0}" -P ">>" --bdr="#$GLOBAL_ACCENT" --tf="#$GLOBAL_ACCENT" --hf="#$GLOBAL_ACCENT" -x "$3"
 }
 
@@ -36,19 +35,19 @@ connect() {
 		output=$?
 	fi
 
-	while iwctl station $adapter show | grep -q connecting;do
+	while iwctl station $adapter show | grep -q connecting; do
 		notify "Connecting to $wifi_name"
 		sleep 1
 	done
 
-	if [ "$output" -ne 0 ]; then 
+	if [ "$output" -ne 0 ]; then
 		notify "Unable to connect to $wifi_name, try again later."
 		return 0
 	fi
 	notify "Connected: $wifi_name"
 }
 
-if iwctl device $adapter show | grep -q 'Powered.*off';then
+if iwctl device $adapter show | grep -q 'Powered.*off'; then
 	option=$(printf 'Turn On' | menu '[iwd]')
 	[ -z "$option" ] && exit 0
 	iwctl device $adapter set-property Powered on
@@ -67,7 +66,7 @@ while option=$(printf 'Scan\nDisconnect\nTurn Off\nExit\n%s\n%s' "$divider" "$(s
 			;;
 		Scan)
 			iwctl station $adapter scan
-			while iwctl station wlan0 show | grep -q 'Scanning.*yes';do
+			while iwctl station wlan0 show | grep -q 'Scanning.*yes'; do
 				notify "Scanning For Networks"
 				sleep 1
 			done
