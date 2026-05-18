@@ -88,6 +88,7 @@ gtp() {
 	curl -sL "https://raw.githubusercontent.com/ngerakines/commitment/master/commit_messages.txt" --etag-compare "$cache_file.etag" --etag-save "$cache_file.etag" -o "$cache_file"
 	[ -z "$*" ] && commit=$(shuf -n1 "$cache_file") || commit=$*
 	git add -p
+	printf "\nCommit Message: $commit\n"
 	git commit -m "$commit"
 	git push
 	unset commit
