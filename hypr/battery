@@ -1,7 +1,7 @@
 #!/bin/sh
 
 notify() {
-	notify-send -e -i "$icon_dir/$1" -h "string:x-canonical-private-synchronous:${0##*/}" "$2" -u "${3:-normal}"
+	notify-send -e -t 5000 -i "${icon_dir}${1}" -h "string:x-canonical-private-synchronous:${0##*/}" "$2" -u "${3:-normal}"
 }
 
 print_sleep() {
@@ -9,36 +9,54 @@ print_sleep() {
 	sleep "$1"
 }
 
+switch_to_ac_mode() {
+	charge_icon=$(printf "%03d" "$((charge / 10))0")
+	hyprctl keyword monitor 'eDP-1',preferred,auto,1.5,bitdepth,10
+	hyprctl keyword decoration:blur:enabled true
+	hyprctl keyword decoration:shadow:enabled true
+	notify "battery-$charge_icon-charging.svg" "AC Mode ($charge%, Charging)"
+	exit 0
+}
+
+switch_to_battery_mode() {
+	charge_icon=$(printf "%03d" "$((charge / 10))0")
+	hyprctl keyword monitor 'eDP-1',$battery_resolution,auto,1.5,bitdepth,10
+	hyprctl keyword decoration:blur:enabled false
+	hyprctl keyword decoration:shadow:enabled false
+	notify "battery-$charge_icon.svg" "Battery Mode ($charge%, Discharging)"
+	exit 0
+}
 #declaration
+dir="/sys/class/power_supply/"
 battery="BAT0" #change accordingly
-dir="/sys/class/power_supply/$battery/"
+battery_dir="${dir}${battery}/"
 icon_dir="/usr/share/icons/Papirus-Dark/22x22/panel/" #change accordingly
 i=0
 status="normal"
-charge=$(cat "$dir"/capacity)
-power_status=$(cat "$dir"/status)
+charge=$(cat "$battery_dir"/capacity)
+battery_resolution="2880x1800@48" # widthxheight@refresh_rate
 
 case "$1" in
-    ac)
-	notify "battery-$(( charge / 10))0-charging.svg" "Power: AC Mode ($charge % $power_status)"
-        hyprctl keyword decoration:blur:enabled true
-	hyprctl keyword decoration:shadow:enabled true
-	exit 0
-        ;;
+	ac)
+		switch_to_ac_mode
+		;;
 
-    battery)
-	notify "battery-$(( charge / 10))0.svg" "Power: Battery Mode ($charge % $power_status)"
-        hyprctl keyword decoration:blur:enabled false
-	hyprctl keyword decoration:shadow:enabled false
-	exit 0
-        ;;
+	battery)
+		switch_to_battery_mode
+		;;
+	check)
+		if [ "$(cat "$dir/ADP1/online")" -eq 0 ]; then
+			switch_to_battery_mode
+		fi
+		exit 0
+		;;
 
-    *) ;;
+	*) ;;
 esac
 
 #infinite loop
-while charge=$(cat "$dir"/capacity); do
-	if [ "$(cat "$dir"/status)" = "Charging" ]; then
+while charge=$(cat "$battery_dir"/capacity); do
+	if [ "$(cat "$battery_dir"/status)" = "Charging" ]; then
 		i=300 #default polling time, it's 5 minutes
 	else
 		case $charge in

@@ -1,0 +1,9 @@
+[Unit]
+Description=Monitors current Workspace
+
+[Service]
+Type=simple
+ExecStart=%h/.config/hypr/workspace focus
+Restart=on-failure
+RestartSec=5
+

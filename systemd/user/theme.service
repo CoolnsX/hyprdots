@@ -1,0 +1,6 @@
+[Unit]
+Description=Set GTK Theme
+
+[Service]
+Type=oneshot
+ExecStart=%h/.config/hypr/themes

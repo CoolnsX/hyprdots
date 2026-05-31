@@ -46,7 +46,7 @@ case $1 in
 		;;
 	focus)
 		#shows the workspace number as notification whenever u switch workspaces and also handles the dual monitor setup on the fly(perfect for laptop users)
-		socat - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do
+		socat -u "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" - | while read -r line; do
 			printf "%s" "$line" | grep -qE "monitoraddedv2.*HEADLESS" && continue
 			printf "%s" "$line" | grep -q "monitoraddedv2" && handle_it "$line"
 			#recent workspace switcher

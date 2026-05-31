@@ -3,4 +3,4 @@ Description=Power Mode (%i)
 
 [Service]
 Type=oneshot
-ExecStart=/home/tanveer/.config/hypr/battery %i
+ExecStart=%h/.config/hypr/battery %i

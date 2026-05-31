@@ -1,0 +1,8 @@
+[Unit]
+Description=Ntfy Subscribe Notifications
+
+[Service]
+Type=simple
+ExecStart=%h/.config/hypr/ntfy_sub
+Restart=on-failure
+RestartSec=5

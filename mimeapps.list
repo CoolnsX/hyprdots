@@ -1,14 +1,14 @@
 [Default Applications]
 inode/directory=pcmanfm.desktop
-image/jpeg=nsxiv.desktop
+image/jpeg=org.xfce.ristretto.desktop
 application/pdf=firefox.desktop
 text/html=firefox.desktop
 x-scheme-handler/http=firefox.desktop
 x-scheme-handler/https=firefox.desktop
 x-scheme-handler/about=firefox.desktop
 x-scheme-handler/unknown=firefox.desktop
-image/png=nsxiv.desktop
-image/webp=nsxiv.desktop
+image/png=org.xfce.ristretto.desktop
+image/webp=org.xfce.ristretto.desktop
 plain/text=nvim.desktop
 text/x-python=nvim.desktop
 text/english=nvim.deskop
@@ -41,10 +41,11 @@ application/x-bittorrent=torrent.desktop
 x-scheme-handler/magnet=torrent.desktop
 hoppscotch=hoppscotch-handler.desktop
 audio/flac=mpv.desktop
+application/octet-stream=nvim.desktop
 
 [Added Associations]
 video/x-matroska=mpv.desktop;
-application/octet-stream=mpv.desktop;firefox.desktop;
+application/octet-stream=nvim.desktop;mpv.desktop;firefox.desktop;
 video/vnd.radgamettools.bink=mpv.desktop;
 x-scheme-handler/mailto=firefox.desktop;
 x-scheme-handler/http=firefox.desktop

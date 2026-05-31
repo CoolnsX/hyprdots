@@ -1,0 +1,8 @@
+[Unit]
+Description=Set Background (%i)
+
+[Service]
+Type=simple
+ExecStartPre=-/usr/bin/pkill -x swaybg
+ExecStart=/usr/sbin/swaybg -i %h/.config/wall/%i -m fill
+Restart=on-failure

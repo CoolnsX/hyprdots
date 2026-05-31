@@ -1,0 +1,9 @@
+[Unit]
+Description=Monitors the battery Power and State.
+
+[Service]
+Type=simple
+ExecStart=%h/.config/hypr/battery
+Restart=on-failure
+RestartSec=5
+
