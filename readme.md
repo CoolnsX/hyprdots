@@ -2,3 +2,6 @@
 
 ## Note for backlight
 - Copy the file from .config/hypr/backlight.rules to /etc/udev/rules.d/ directory
+
+## Note for Battery Monitoring
+- Copy the file from .config/hypr/powersupply_notification.rules to /etc/udev/rules.d/ directory
