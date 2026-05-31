@@ -2,5 +2,3 @@
 ACTION=="change", SUBSYSTEM=="power_supply", ATTRS{type}=="Mains", ATTRS{online}=="0", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}+="power-mode@battery.service"
 # Rule for when switching to AC
 ACTION=="change", SUBSYSTEM=="power_supply", ATTRS{type}=="Mains", ATTRS{online}=="1", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}+="power-mode@ac.service"
-# Rule for battery percentage/status changes
-ACTION=="change", SUBSYSTEM=="power_supply", KERNEL=="BAT0", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}+="power-mode@status.service"

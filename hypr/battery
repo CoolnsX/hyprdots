@@ -4,52 +4,39 @@ notify() {
 	notify-send -e -t 5000 -i "${icon_dir}${1}" -h "string:x-canonical-private-synchronous:${0##*/}" "$2" -u "${3:-normal}"
 }
 
+print_sleep() {
+	[ -n "$4" ] && printf "Status: %s, Charge: %s,Next Check in %s seconds\n" "$3" "$2" "$1"
+	sleep "$1"
+}
+
 switch_to_ac_mode() {
+	charge_icon=$(printf "%03d" "$((charge / 10))0")
 	hyprctl keyword monitor 'eDP-1',preferred,auto,1.5,bitdepth,10
 	hyprctl keyword decoration:blur:enabled true
 	hyprctl keyword decoration:shadow:enabled true
 	notify "battery-$charge_icon-charging.svg" "AC Mode ($charge%, Charging)"
+	systemctl --user stop battery-monitor.service
+	exit 0
 }
 
 switch_to_battery_mode() {
+	charge_icon=$(printf "%03d" "$((charge / 10))0")
 	hyprctl keyword monitor 'eDP-1',$battery_resolution,auto,1.5,bitdepth,10
 	hyprctl keyword decoration:blur:enabled false
 	hyprctl keyword decoration:shadow:enabled false
 	notify "battery-$charge_icon.svg" "Battery Mode ($charge%, Discharging)"
+	systemctl --user start battery-monitor.service
+	exit 0
 }
-
-check_battery_status() {
-	[ "$(cat "$battery_dir/status")" = "Charging" ] && return 0
-
-	case "$charge" in
-		[2-9][0-9] | 100)
-			status="normal"
-			;;
-		[1-2][0-9])
-			status="low"
-			;;
-		[0-9])
-			status="critical"
-			;;
-	esac
-	
-	case "$status" in
-		low | critical)
-			notify "battery-$charge_icon.svg" "$charge% Battery $status, Please Plug In Charger!!" "$status"
-			;;
-		*) ;;
-	esac
-}
-
 #declaration
 dir="/sys/class/power_supply/"
 battery="BAT0" #change accordingly
 battery_dir="${dir}${battery}/"
 icon_dir="/usr/share/icons/Papirus-Dark/22x22/panel/" #change accordingly
+i=0
 status="normal"
 charge=$(cat "$battery_dir"/capacity)
 battery_resolution="2880x1800@48" # widthxheight@refresh_rate
-charge_icon=$(printf "%03d" "$((charge / 10))0")
 
 case "$1" in
 	ac)
@@ -63,11 +50,34 @@ case "$1" in
 		if [ "$(cat "$dir/ADP1/online")" -eq 0 ]; then
 			switch_to_battery_mode
 		fi
-		;;
-
-	status)
-		check_battery_status
+		exit 0
 		;;
 
 	*) ;;
 esac
+
+#infinite loop
+while charge=$(cat "$battery_dir"/capacity); do
+	case $charge in
+		[2-9][0-9] | 100)
+			i=300 # 5 minutes
+			status="normal"
+			;;
+		[1-2][0-9])
+			i=150 # 2.5 minutes
+			status="low"
+			;;
+		[5-9])
+			i=60 # every minute
+			status="critical"
+			;;
+		[0-4])
+			i=10 # every 10 seconds
+			status="critical"
+			;;
+	esac
+
+	# remind appropriately
+	[ "$status" != "normal" ] && notify "battery-010.svg" "$charge % Battery $status, Please Plugin Charger!!" "$status"
+	print_sleep "$i" "$charge" "$status" "$2" #pass 'log' as argument to print logs
+done
