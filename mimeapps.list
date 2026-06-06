@@ -65,3 +65,4 @@ application/x-bittorrent=torrent.desktop;
 application/x-desktop=nvim.desktop;
 application/x-php=firefox.desktop;
 audio/flac=mpv.desktop;
+image/x-xcf=org.xfce.ristretto.desktop;

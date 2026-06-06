@@ -45,6 +45,7 @@ fpath=($HOME/.config/zsh/completions $fpath)
 autoload -Uz compinit
 compinit
 zstyle ':completion:*' menu select
+trap 'rehash' USR1
 eval "$(starship init zsh)"
 
 #plugins

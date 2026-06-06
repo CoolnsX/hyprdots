@@ -1,10 +1,11 @@
 #!/bin/sh
 
 notify() {
-	notify-send -i "$icon_path" -e -h "string:x-canonical-private-synchronous:${0##*/}" "[$1] ${2}" "$3"
+	notify-send -i "${4:-$icon_path}" -e "[$1] ${2}" "$3"
 }
 
 env_file="${XDG_CONFIG_HOME:-$HOME/.config}/.env"
+#shellcheck source=/dev/null
 . "$env_file"
 
 ntfy_creds load
@@ -16,9 +17,12 @@ trap "ntfy_creds unload" EXIT
 trap "ntfy_creds unload; exit 1" INT HUP
 
 websocat --no-close "wss://${NTFY_URL#https://}/$NTFY_TOPIC_LISTEN/ws?auth=$token" | while IFS= read -r line; do
-	title=$(printf '%s' "$line" | sed -nE 's|.*,"title":"([^"]*)",.*|\1|p')
+	title=$(printf '%s' "$line" | sed -nE 's|.*,"title":"([^"]*)",?.*|\1|p')
 	topic=$(printf '%s' "$line" | sed -nE 's|.*,"topic":"([^"]*)",?.*|\1|p')
-	message=$(printf '%s' "$line" | sed -nE 's|.*,"message":"([^"]*)",.*|\1|p')
+	message=$(printf '%s' "$line" | sed -nE 's|.*,"message":"([^"]*)",?.*|\1|p')
+	icon=$(printf '%s' "$line" | sed -nE 's|.*,"icon":"([^"]*)",?.*|\1|p')
+	[ -n "$icon" ] && curl -sL "$icon" -o "/tmp/default.jpg" && icon="/tmp/default.jpg"
 	printf '%s' "$line" | grep -q '"open"' && notify "NTFY" "Listening" "$topic"
-	[ -z "$message" ] || notify "$topic" "${title:-NO TITLE}" "$message"
+	[ -z "$message" ] || notify "$topic" "${title:-NO TITLE}" "$message" "$icon"
+	[ -n "$icon" ] && unset icon
 done

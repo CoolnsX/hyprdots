@@ -4,5 +4,5 @@ Description=Ntfy Subscribe Notifications
 [Service]
 Type=simple
 ExecStart=%h/.config/hypr/ntfy_sub
-Restart=on-failure
+Restart=always
 RestartSec=5
